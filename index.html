@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VERIDIC — The Deterministic AI That Actually Does Things</title>
+  <meta name="description" content="VERIDIC is a voice-first agentic operating system for Windows. Deterministic execution, local privacy, and real autonomous actions — not just chat.">
+  <meta name="keywords" content="VERIDIC, AI assistant, agentic OS, voice control, deterministic AI, local AI, Windows automation">
+  <meta name="author" content="VERIDIC Project">
+  <meta property="og:title" content="VERIDIC — The Deterministic AI That Actually Does Things">
+  <meta property="og:description" content="A voice-first agentic operating system. Real actions, not hallucinations.">
+  <meta property="og:type" content="website">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="enhancements.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23f59e0b'/><text x='50' y='72' font-size='60' font-weight='900' text-anchor='middle' fill='%23000'>V</text></svg>">
+</head>
+<body>
+
+  <!-- Scroll Progress -->
+  <div class="scroll-progress"></div>
+  <!-- Particle Background -->
+  <canvas id="particleCanvas"></canvas>
+
+  <!-- ============ NAVIGATION ============ -->
+  <nav class="nav" id="mainNav" aria-label="Main navigation">
+    <div class="nav-inner">
+      <a href="#" class="nav-logo" aria-label="VERIDIC Home">
+        <div class="v-mark">V</div>
+        VERIDIC
+      </a>
+      <div class="nav-links">
+        <a href="#features">Features</a>
+        <a href="#capabilities">Capabilities</a>
+        <a href="#tech">Tech Stack</a>
+        <a href="#use-cases">Use Cases</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#faq">FAQ</a>
+      </div>
+      <div class="nav-cta">
+        <a href="#" class="btn btn-secondary"><i class="fab fa-github"></i> GitHub</a>
+        <a href="#cta" class="btn btn-primary">Get Started</a>
+      </div>
+      <button class="hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobileMenu" role="dialog" aria-label="Mobile navigation">
+    <a href="#features">Features</a>
+    <a href="#capabilities">Capabilities</a>
+    <a href="#tech">Tech Stack</a>
+    <a href="#use-cases">Use Cases</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#faq">FAQ</a>
+    <a href="#cta" class="btn btn-primary">Get Started</a>
+  </div>
+
+  <!-- ============ HERO SECTION ============ -->
+  <section class="hero" id="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-grid-lines"></div>
+    <div class="hero-orb hero-orb-1"></div>
+    <div class="hero-orb hero-orb-2"></div>
+    <div class="hero-orb hero-orb-3"></div>
+    <div class="container">
+      <div class="hero-content">
+        <div class="hero-badge">
+          <span class="dot"></span>
+          v1.0 — Now in Development
+        </div>
+        <h1>The Deterministic AI<br>That <span class="text-gradient">Actually Does Things</span></h1>
+        <p>VERIDIC is a voice-first agentic operating system for Windows. It doesn't just talk — it executes real actions on your machine with deterministic precision and zero hallucination.</p>
+        <div class="hero-buttons">
+          <a href="#cta" class="btn btn-primary"><i class="fas fa-download"></i> Download Now</a>
+          <a href="#what-is" class="btn btn-secondary"><i class="fas fa-play"></i> See How It Works</a>
+        </div>
+        <div class="hero-stats">
+          <div class="hero-stat">
+            <div class="number" data-count="50" data-suffix="+">0+</div>
+            <div class="label">Built-in Tools</div>
+          </div>
+          <div class="hero-stat">
+            <div class="number" data-count="100" data-suffix="%">0%</div>
+            <div class="label">Local & Private</div>
+          </div>
+          <div class="hero-stat">
+            <div class="number" data-count="0" data-suffix="ms*">0ms*</div>
+            <div class="label">Hallucination Rate</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ WHAT IS VERIDIC ============ -->
+  <section class="section what-is" id="what-is">
+    <div class="container">
+      <div class="what-is-grid">
+        <div class="fade-in">
+          <span class="section-label">// What is VERIDIC</span>
+          <h2 class="section-title">Not a Chatbot.<br><span class="text-gradient">An Agentic OS.</span></h2>
+          <p class="section-subtitle" style="margin-bottom:24px;">Most AI assistants talk. VERIDIC acts. It's a deterministic operating layer that sits on top of Windows, understanding your voice commands and executing real system actions — opening apps, managing files, tuning hardware, automating workflows — with guaranteed, repeatable outcomes.</p>
+          <p style="color:var(--text-muted);font-size:0.95rem;margin-bottom:32px;">Every action is backed by a registered tool with validated parameters. No guessing, no hallucinating file paths, no approximate results. If VERIDIC says it did something, it did.</p>
+          <a href="#features" class="btn btn-secondary"><i class="fas fa-arrow-right"></i> Explore Features</a>
+        </div>
+        <div class="what-is-visual fade-in">
+          <div class="terminal-window">
+            <div class="terminal-header">
+              <span class="terminal-dot red"></span>
+              <span class="terminal-dot yellow"></span>
+              <span class="terminal-dot green"></span>
+            </div>
+            <div class="terminal-body">
+              <div class="line"><span class="prompt">you &gt;</span> <span class="cmd">"Open Spotify and play my study playlist"</span></div>
+              <div class="line"><span class="output">⚙ Resolving intent → app_launcher + spotify_control</span></div>
+              <div class="line"><span class="output">⚙ Launching Spotify.exe … PID 14832</span></div>
+              <div class="line"><span class="output">⚙ Sending play command → "Study Focus Mix"</span></div>
+              <div class="line"><span class="success">✓ Done. Spotify is playing "Study Focus Mix".</span></div>
+              <div class="line">&nbsp;</div>
+              <div class="line"><span class="prompt">you &gt;</span> <span class="cmd">"Set fan speed to silent and dim my screen"</span></div>
+              <div class="line"><span class="output">⚙ Hardware Intelligence → fan_mode: silent</span></div>
+              <div class="line"><span class="output">⚙ Display brightness → 40%</span></div>
+              <div class="line"><span class="success">✓ Done. Silent mode active, brightness at 40%.</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ KEY FEATURES ============ -->
+  <section class="section" id="features">
+    <div class="container">
+      <div class="text-center fade-in">
+        <span class="section-label">// Core Features</span>
+        <h2 class="section-title">Engineered for <span class="text-gradient">Determinism</span></h2>
+        <p class="section-subtitle mx-auto">Every capability is purpose-built. No black boxes, no unpredictable outputs — just reliable, auditable execution.</p>
+      </div>
+      <div class="features-grid">
+
+        <div class="feature-card fade-in">
+          <div class="feature-icon"><i class="fas fa-microphone"></i></div>
+          <h3>Voice-First Control</h3>
+          <p>Wake-word activation with real-time speech recognition. Speak naturally — VERIDIC understands intent, not just keywords. Multilingual support included.</p>
+        </div>
+
+        <div class="feature-card fade-in">
+          <div class="feature-icon"><i class="fas fa-bullseye"></i></div>
+          <h3>Deterministic Execution</h3>
+          <p>Every action maps to a registered tool with validated parameters. The same command produces the same result every time — guaranteed, auditable, and repeatable.</p>
+        </div>
+
+        <div class="feature-card fade-in">
+          <div class="feature-icon"><i class="fas fa-clock-rotate-left"></i></div>
+          <h3>Transactional File System</h3>
+          <p>Automatic backups before every file operation. Full rollback capability if anything goes wrong. Your data is never at risk.</p>
+        </div>
+
+        <div class="feature-card fade-in">
+          <div class="feature-icon"><i class="fas fa-vial"></i></div>
+          <h3>Digital Twin Sandbox</h3>
+          <p>Run "what-if" simulations before committing changes. Preview the outcome of complex operations in a safe, isolated environment.</p>
+        </div>
+
+        <div class="feature-card fade-in">
+          <div class="feature-icon"><i class="fas fa-puzzle-piece"></i></div>
+          <h3>Capability Acquisition</h3>
+          <p>VERIDIC can install and configure tools on demand. If it doesn't have a capability, it acquires one — automatically and securely.</p>
+        </div>
+
+        <div class="feature-card fade-in">
+          <div class="feature-icon"><i class="fas fa-microchip"></i></div>
+          <h3>Hardware Intelligence</h3>
+          <p>Monitor CPU, GPU, RAM, and thermals in real time. Switch performance modes, manage fan curves, and protect your hardware proactively.</p>
+        </div>
+
+        <div class="feature-card fade-in">
+          <div class="feature-icon"><i class="fas fa-robot"></i></div>
+          <h3>Autonomous Workflows</h3>
+          <p>Define multi-step task chains via simple JSON. VERIDIC executes them autonomously — scheduled, event-triggered, or on voice command.</p>
+        </div>
+
+        <div class="feature-card fade-in">
+          <div class="feature-icon"><i class="fas fa-shield-halved"></i></div>
+          <h3>Security & Permissions</h3>
+          <p>Face ID authentication, granular permission gates, and full audit logging. Every action is traceable and every tool requires explicit authorisation.</p>
+        </div>
+
+        <div class="feature-card fade-in">
+          <div class="feature-icon"><i class="fas fa-server"></i></div>
+          <h3>Local-First / Offline</h3>
+          <p>Runs entirely on your machine with local LLMs (Gemma via Ollama). Optional cloud fallback for advanced tasks. Your data never leaves your PC.</p>
+        </div>
+
+        <div class="feature-card fade-in">
+          <div class="feature-icon"><i class="fas fa-brain"></i></div>
+          <h3>Persistent Memory</h3>
+          <p>VERIDIC remembers your preferences, past actions, and context across sessions. It learns your patterns without sending data to any cloud.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ WHAT VERIDIC CAN DO ============ -->
+  <section class="section capabilities" id="capabilities">
+    <div class="container">
+      <div class="text-center fade-in">
+        <span class="section-label">// Real-World Actions</span>
+        <h2 class="section-title">What VERIDIC <span class="text-gradient">Can Do</span></h2>
+        <p class="section-subtitle mx-auto">These aren't demos. These are production capabilities that run on your machine right now.</p>
+      </div>
+      <div class="cap-grid">
+
+        <div class="cap-item fade-in">
+          <div class="cap-icon amber"><i class="fas fa-rocket"></i></div>
+          <div class="cap-text">
+            <h4>Launch & Control Apps</h4>
+            <p>Open, close, switch, and manage any installed application by voice.</p>
+          </div>
+        </div>
+
+        <div class="cap-item fade-in">
+          <div class="cap-icon blue"><i class="fas fa-folder-open"></i></div>
+          <div class="cap-text">
+            <h4>File Management</h4>
+            <p>Create, move, rename, search, and organise files and folders with rollback safety.</p>
+          </div>
+        </div>
+
+        <div class="cap-item fade-in">
+          <div class="cap-icon green"><i class="fas fa-graduation-cap"></i></div>
+          <div class="cap-text">
+            <h4>Study Assistance</h4>
+            <p>Summarise documents, generate flashcards, research topics, and manage study schedules.</p>
+          </div>
+        </div>
+
+        <div class="cap-item fade-in">
+          <div class="cap-icon purple"><i class="fas fa-video"></i></div>
+          <div class="cap-text">
+            <h4>Content Creation</h4>
+            <p>Script YouTube videos, automate uploads, manage thumbnails, and schedule content.</p>
+          </div>
+        </div>
+
+        <div class="cap-item fade-in">
+          <div class="cap-icon amber"><i class="fas fa-temperature-half"></i></div>
+          <div class="cap-text">
+            <h4>Hardware Tuning</h4>
+            <p>Adjust fan speeds, monitor thermals, switch power profiles — all by voice.</p>
+          </div>
+        </div>
+
+        <div class="cap-item fade-in">
+          <div class="cap-icon blue"><i class="fas fa-gamepad"></i></div>
+          <div class="cap-text">
+            <h4>Minecraft Automation</h4>
+            <p>Control builds, manage servers, and automate in-game tasks through the agent bridge.</p>
+          </div>
+        </div>
+
+        <div class="cap-item fade-in">
+          <div class="cap-icon green"><i class="fas fa-terminal"></i></div>
+          <div class="cap-text">
+            <h4>System Administration</h4>
+            <p>Run scripts, manage services, configure settings, and monitor system health.</p>
+          </div>
+        </div>
+
+        <div class="cap-item fade-in">
+          <div class="cap-icon purple"><i class="fas fa-calendar-check"></i></div>
+          <div class="cap-text">
+            <h4>Proactive Scheduling</h4>
+            <p>Anticipate tasks, set reminders, and trigger workflows on time or event-based conditions.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ TECHNOLOGY STACK ============ -->
+  <section class="section" id="tech">
+    <div class="container">
+      <div class="text-center fade-in">
+        <span class="section-label">// Technology</span>
+        <h2 class="section-title">Built on <span class="text-gradient">Open Source</span></h2>
+        <p class="section-subtitle mx-auto">VERIDIC is built with battle-tested open-source technologies. Local-first by design, extensible by nature.</p>
+      </div>
+      <div class="tech-pills fade-in">
+        <div class="tech-pill"><i class="fab fa-python"></i> Python</div>
+        <div class="tech-pill"><i class="fas fa-comments"></i> LiveKit</div>
+        <div class="tech-pill"><i class="fas fa-brain"></i> Ollama</div>
+        <div class="tech-pill"><i class="fas fa-gem"></i> Gemma 3</div>
+        <div class="tech-pill"><i class="fas fa-volume-high"></i> Silero VAD</div>
+        <div class="tech-pill"><i class="fas fa-comment-dots"></i> Piper TTS</div>
+        <div class="tech-pill"><i class="fas fa-microphone-lines"></i> Whisper</div>
+        <div class="tech-pill"><i class="fas fa-database"></i> SQLite</div>
+        <div class="tech-pill"><i class="fab fa-js"></i> WebSockets</div>
+        <div class="tech-pill"><i class="fas fa-lock"></i> Face ID (OpenCV)</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ USE CASES ============ -->
+  <section class="section use-cases" id="use-cases">
+    <div class="container">
+      <div class="text-center fade-in">
+        <span class="section-label">// Use Cases</span>
+        <h2 class="section-title">Who Is VERIDIC <span class="text-gradient">For?</span></h2>
+        <p class="section-subtitle mx-auto">From solo power-users to enterprise IT teams — VERIDIC adapts to your workflow.</p>
+      </div>
+      <div class="uc-grid">
+
+        <div class="uc-card fade-in">
+          <div class="uc-icon">🧑‍💻</div>
+          <h3>Personal Productivity</h3>
+          <p>Automate your daily workflow — launch apps, manage files, control music, and organise your desktop hands-free. Your personal J.A.R.V.I.S.</p>
+        </div>
+
+        <div class="uc-card fade-in">
+          <div class="uc-icon">🎓</div>
+          <h3>Education & Research</h3>
+          <p>Summarise papers, generate study aids, manage citations, and keep your research organised — all through natural conversation.</p>
+        </div>
+
+        <div class="uc-card fade-in">
+          <div class="uc-icon">🎮</div>
+          <h3>Gaming & Modding</h3>
+          <p>Automate Minecraft builds, manage game servers, optimise performance settings, and control your setup without leaving the game.</p>
+        </div>
+
+        <div class="uc-card fade-in">
+          <div class="uc-icon">📹</div>
+          <h3>Content Creators</h3>
+          <p>Script, record, edit workflow prep, and automate YouTube uploads. VERIDIC handles the tedious parts so you can focus on creating.</p>
+        </div>
+
+        <div class="uc-card fade-in">
+          <div class="uc-icon">🖥️</div>
+          <h3>Server & IT Management</h3>
+          <p>Monitor system health, manage services, run diagnostics, and respond to alerts — locally or across your network.</p>
+        </div>
+
+        <div class="uc-card fade-in">
+          <div class="uc-icon">🏢</div>
+          <h3>Enterprise Automation</h3>
+          <p>Deploy VERIDIC across workstations for standardised, auditable task automation with role-based access and centralised logging.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PRICING ============ -->
+  <section class="section" id="pricing">
+    <div class="container">
+      <div class="text-center fade-in">
+        <span class="section-label">// Pricing</span>
+        <h2 class="section-title">Simple, <span class="text-gradient">Transparent</span> Plans</h2>
+        <p class="section-subtitle mx-auto">Start free. Scale when you're ready.</p>
+      </div>
+      <div class="pricing-grid fade-in">
+
+        <!-- Community -->
+        <div class="price-card">
+          <h3>Community</h3>
+          <p class="desc">For individuals and open-source enthusiasts.</p>
+          <div class="price">Free</div>
+          <ul>
+            <li><i class="fas fa-check"></i> Core voice control</li>
+            <li><i class="fas fa-check"></i> Local LLM (Gemma)</li>
+            <li><i class="fas fa-check"></i> 30+ built-in tools</li>
+            <li><i class="fas fa-check"></i> File management & rollback</li>
+            <li><i class="fas fa-check"></i> Community support</li>
+            <li><i class="fas fa-check"></i> Open-source access</li>
+          </ul>
+          <a href="#cta" class="btn btn-secondary">Get Started Free</a>
+        </div>
+
+        <!-- Pro -->
+        <div class="price-card featured">
+          <h3>Pro</h3>
+          <p class="desc">For power users who demand more.</p>
+          <div class="price">$12<span>/month</span></div>
+          <ul>
+            <li><i class="fas fa-check"></i> Everything in Community</li>
+            <li><i class="fas fa-check"></i> Cloud LLM fallback</li>
+            <li><i class="fas fa-check"></i> Advanced workflows (JSON)</li>
+            <li><i class="fas fa-check"></i> Hardware Intelligence</li>
+            <li><i class="fas fa-check"></i> Digital Twin Sandbox</li>
+            <li><i class="fas fa-check"></i> Priority support</li>
+          </ul>
+          <a href="#cta" class="btn btn-primary">Start Pro Trial</a>
+        </div>
+
+        <!-- Enterprise -->
+        <div class="price-card">
+          <h3>Enterprise</h3>
+          <p class="desc">For teams and organisations at scale.</p>
+          <div class="price">Custom</div>
+          <ul>
+            <li><i class="fas fa-check"></i> Everything in Pro</li>
+            <li><i class="fas fa-check"></i> Multi-user deployment</li>
+            <li><i class="fas fa-check"></i> Role-based access control</li>
+            <li><i class="fas fa-check"></i> Centralised audit logging</li>
+            <li><i class="fas fa-check"></i> Custom tool integrations</li>
+            <li><i class="fas fa-check"></i> Dedicated support & SLA</li>
+          </ul>
+          <a href="#cta" class="btn btn-secondary">Contact Sales</a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <hr class="section-divider">
+
+  <!-- ============ COMPARISON ============ -->
+  <section class="section comparison" id="comparison">
+    <div class="container">
+      <div class="text-center fade-in">
+        <span class="section-label">// Why VERIDIC</span>
+        <h2 class="section-title">VERIDIC vs <span class="text-gradient">Traditional Assistants</span></h2>
+        <p class="section-subtitle mx-auto">Not all AI is created equal. Here's how VERIDIC compares.</p>
+      </div>
+      <div class="fade-in" style="overflow-x:auto">
+        <table class="comparison-table">
+          <thead><tr><th>Capability</th><th>VERIDIC</th><th>Siri / Cortana</th><th>ChatGPT</th></tr></thead>
+          <tbody>
+            <tr><td>Execute real system actions</td><td class="check"><i class="fas fa-check"></i> Yes</td><td class="partial">Limited</td><td class="cross"><i class="fas fa-xmark"></i> No</td></tr>
+            <tr><td>Deterministic output</td><td class="check"><i class="fas fa-check"></i> Yes</td><td class="cross"><i class="fas fa-xmark"></i> No</td><td class="cross"><i class="fas fa-xmark"></i> No</td></tr>
+            <tr><td>Runs 100% offline</td><td class="check"><i class="fas fa-check"></i> Yes</td><td class="cross"><i class="fas fa-xmark"></i> No</td><td class="cross"><i class="fas fa-xmark"></i> No</td></tr>
+            <tr><td>File system rollback</td><td class="check"><i class="fas fa-check"></i> Yes</td><td class="cross"><i class="fas fa-xmark"></i> No</td><td class="cross"><i class="fas fa-xmark"></i> No</td></tr>
+            <tr><td>Hardware control</td><td class="check"><i class="fas fa-check"></i> Yes</td><td class="cross"><i class="fas fa-xmark"></i> No</td><td class="cross"><i class="fas fa-xmark"></i> No</td></tr>
+            <tr><td>Open source</td><td class="check"><i class="fas fa-check"></i> Yes</td><td class="cross"><i class="fas fa-xmark"></i> No</td><td class="cross"><i class="fas fa-xmark"></i> No</td></tr>
+            <tr><td>Autonomous multi-step workflows</td><td class="check"><i class="fas fa-check"></i> Yes</td><td class="cross"><i class="fas fa-xmark"></i> No</td><td class="partial">Limited</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <hr class="section-divider">
+
+  <!-- ============ FAQ ============ -->
+  <section class="section" id="faq">
+    <div class="container">
+      <div class="text-center fade-in">
+        <span class="section-label">// FAQ</span>
+        <h2 class="section-title">Frequently <span class="text-gradient">Asked</span></h2>
+        <p class="section-subtitle mx-auto">Quick answers to common questions.</p>
+      </div>
+      <div class="faq-list fade-in">
+        <div class="faq-item">
+          <button class="faq-question">Is VERIDIC really free? <i class="fas fa-chevron-down"></i></button>
+          <div class="faq-answer"><div class="faq-answer-inner">Yes. The Community edition is fully open-source and free forever. It includes core voice control, 30+ built-in tools, local LLM support, and file management with rollback. Pro and Enterprise plans add advanced features.</div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question">Does VERIDIC send my data to the cloud? <i class="fas fa-chevron-down"></i></button>
+          <div class="faq-answer"><div class="faq-answer-inner">No. VERIDIC runs entirely on your local machine using Gemma via Ollama. Cloud LLM fallback is optional and only available in the Pro plan — you control when and if it's used.</div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question">What does "deterministic" actually mean? <i class="fas fa-chevron-down"></i></button>
+          <div class="faq-answer"><div class="faq-answer-inner">Every action VERIDIC takes maps to a registered tool with validated parameters. The same input always produces the same output — no hallucinated file paths, no guessing. Actions are auditable and repeatable.</div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question">What operating systems are supported? <i class="fas fa-chevron-down"></i></button>
+          <div class="faq-answer"><div class="faq-answer-inner">VERIDIC is currently built for Windows 10/11. Linux and macOS support is on the roadmap. The architecture is modular, so platform expansion is straightforward.</div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question">Can I extend VERIDIC with custom tools? <i class="fas fa-chevron-down"></i></button>
+          <div class="faq-answer"><div class="faq-answer-inner">Absolutely. VERIDIC uses a tool registry system. You can write custom Python tools, register them with the agent, and they become available immediately via voice or workflow automation.</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CALL TO ACTION ============ -->
+  <section class="section cta-section" id="cta">
+    <div class="container">
+      <div class="cta-box fade-in">
+        <span class="section-label">// Ready?</span>
+        <h2>Stop Talking to AI.<br><span class="text-gradient">Start Commanding It.</span></h2>
+        <p>Join the next generation of human-computer interaction. Download VERIDIC and take control of your machine — with your voice.</p>
+        <div class="cta-buttons">
+          <a href="#" class="btn btn-primary"><i class="fas fa-download"></i> Download for Windows</a>
+          <a href="#" class="btn btn-secondary"><i class="fab fa-github"></i> View on GitHub</a>
+          <a href="#" class="btn btn-secondary"><i class="fas fa-envelope"></i> Join Waitlist</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="footer" id="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="#" class="nav-logo" aria-label="VERIDIC Home">
+            <div class="v-mark">V</div>
+            VERIDIC
+          </a>
+          <p>A deterministic, voice-first agentic operating system. Built for power users who demand real results.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Product</h4>
+          <a href="#features">Features</a>
+          <a href="#capabilities">Capabilities</a>
+          <a href="#pricing">Pricing</a>
+          <a href="#">Changelog</a>
+        </div>
+        <div class="footer-col">
+          <h4>Resources</h4>
+          <a href="#">Documentation</a>
+          <a href="#">API Reference</a>
+          <a href="#">Tutorials</a>
+          <a href="#">Community</a>
+        </div>
+        <div class="footer-col">
+          <h4>Legal</h4>
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+          <a href="#">Security</a>
+          <a href="#">Contact</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>&copy; 2026 VERIDIC Project. All rights reserved.</span>
+        <div class="footer-social">
+          <a href="#" aria-label="GitHub"><i class="fab fa-github"></i></a>
+          <a href="#" aria-label="Discord"><i class="fab fa-discord"></i></a>
+          <a href="#" aria-label="Twitter"><i class="fab fa-x-twitter"></i></a>
+          <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+  <script src="enhancements.js"></script>
+</body>
+</html>
