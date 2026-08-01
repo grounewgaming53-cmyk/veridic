@@ -1,0 +1,419 @@
+/* ========================================================================
+   VERIDIC — Admin console
+   Private operator UI. Deliberately denser and plainer than the
+   marketing site: this is a tool, not a landing page.
+   ======================================================================== */
+
+.admin-body {
+  background: var(--bg-primary);
+  min-height: 100vh;
+}
+
+/* ------------------------------------------------------------- gate */
+
+.gate {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+}
+
+.gate-card {
+  width: 100%;
+  max-width: 400px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 38px 34px;
+}
+
+.gate-mark {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  margin-bottom: 26px;
+}
+
+.gate-mark .v-mark {
+  width: 36px;
+  height: 36px;
+  background: var(--amber);
+  border-radius: 9px;
+  color: #000;
+  font-weight: 900;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gate-mark span {
+  font-weight: 800;
+  letter-spacing: 2px;
+  font-size: 1.05rem;
+}
+
+.gate-card h1 {
+  font-size: 1.35rem;
+  margin-bottom: 8px;
+}
+
+.gate-card > p {
+  color: var(--text-muted);
+  font-size: 0.86rem;
+  line-height: 1.65;
+  margin-bottom: 26px;
+}
+
+/* ------------------------------------------------------------ shell */
+
+.admin-nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(10, 10, 15, 0.92);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.admin-nav-inner {
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 0 24px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.admin-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  font-size: 0.92rem;
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
+.admin-brand .v-mark {
+  width: 28px;
+  height: 28px;
+  background: var(--amber);
+  border-radius: 7px;
+  color: #000;
+  font-weight: 900;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.admin-tag {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  padding: 3px 9px;
+  border-radius: 100px;
+  background: rgba(139, 92, 246, 0.14);
+  border: 1px solid rgba(139, 92, 246, 0.36);
+  color: #c4b5fd;
+}
+
+.admin-nav-spacer { flex: 1; }
+
+.admin-main {
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 30px 24px 70px;
+}
+
+/* ------------------------------------------------------------ stats */
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 14px;
+  margin-bottom: 28px;
+}
+
+.stat {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+}
+
+.stat .k {
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.stat .v {
+  font-family: var(--font-mono);
+  font-size: 1.65rem;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.stat.revenue .v { color: var(--green); }
+.stat.paid .v { color: var(--green); }
+.stat.pending .v { color: var(--amber); }
+.stat.failed .v { color: #f87171; }
+
+/* ------------------------------------------------------------ table */
+
+.admin-panel {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.admin-panel-head {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.admin-panel-head h2 {
+  font-size: 0.98rem;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.admin-panel-head h2 i { color: var(--amber); font-size: 0.85rem; }
+
+.filters {
+  display: flex;
+  gap: 7px;
+  margin-left: auto;
+  flex-wrap: wrap;
+}
+
+.filter-btn {
+  background: transparent;
+  border: 1px solid var(--border-subtle);
+  color: var(--text-muted);
+  padding: 5px 13px;
+  border-radius: 100px;
+  font-size: 0.76rem;
+  font-family: var(--font-sans);
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.filter-btn:hover { color: var(--text-secondary); border-color: var(--border-color); }
+
+.filter-btn.active {
+  background: var(--amber-subtle);
+  border-color: var(--amber);
+  color: var(--amber);
+}
+
+.table-scroll { overflow-x: auto; }
+
+table.orders {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.84rem;
+  min-width: 900px;
+}
+
+table.orders th {
+  text-align: left;
+  font-family: var(--font-mono);
+  font-size: 0.63rem;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  font-weight: 500;
+  padding: 11px 16px;
+  border-bottom: 1px solid var(--border-subtle);
+  white-space: nowrap;
+  background: rgba(255, 255, 255, 0.015);
+}
+
+table.orders td {
+  padding: 13px 16px;
+  border-bottom: 1px solid var(--border-subtle);
+  vertical-align: middle;
+}
+
+table.orders tbody tr:last-child td { border-bottom: none; }
+table.orders tbody tr { transition: background var(--transition); }
+table.orders tbody tr:hover { background: rgba(255, 255, 255, 0.018); }
+
+.cell-ref {
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  color: var(--amber);
+  white-space: nowrap;
+}
+
+.cell-contact {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.cell-amt {
+  font-family: var(--font-mono);
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+.cell-name { white-space: nowrap; }
+
+.cell-date {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  white-space: nowrap;
+}
+
+.copyable {
+  cursor: pointer;
+  border-bottom: 1px dotted transparent;
+}
+
+.copyable:hover {
+  color: var(--amber);
+  border-bottom-color: var(--amber);
+}
+
+/* ------------------------------------------------- shared primitives
+   Duplicated from checkout.css rather than cross-linked: the admin
+   console is a separate operator surface and shouldn't pull in the
+   whole customer checkout stylesheet just for two small primitives. */
+
+.pill {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.pill.sent {
+  background: rgba(16, 185, 129, 0.13);
+  color: #6ee7b7;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.pill.simulated {
+  background: rgba(139, 92, 246, 0.13);
+  color: #c4b5fd;
+  border: 1px solid rgba(139, 92, 246, 0.3);
+}
+
+.pill.failed {
+  background: rgba(239, 68, 68, 0.11);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.pill.pending {
+  background: rgba(245, 158, 11, 0.11);
+  color: var(--amber);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.spin { animation: spin 1s linear infinite; }
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ------------------------------------------------------------ misc */
+
+.admin-empty {
+  padding: 54px 20px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.88rem;
+}
+
+.admin-empty i {
+  display: block;
+  font-size: 1.7rem;
+  margin-bottom: 12px;
+  opacity: 0.4;
+}
+
+.danger-zone {
+  margin-top: 26px;
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  background: rgba(239, 68, 68, 0.04);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.danger-zone p {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin: 0;
+  flex: 1;
+  min-width: 240px;
+  line-height: 1.6;
+}
+
+.btn-danger {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  color: #f87171;
+  padding: 9px 18px;
+  border-radius: var(--radius-sm);
+  font-size: 0.82rem;
+  cursor: pointer;
+  font-family: var(--font-sans);
+  transition: all var(--transition);
+}
+
+.btn-danger:hover { background: rgba(239, 68, 68, 0.18); }
+
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 100px;
+  padding: 11px 24px;
+  font-size: 0.85rem;
+  box-shadow: var(--shadow-lg);
+  opacity: 0;
+  transition: all var(--transition);
+  z-index: 200;
+  pointer-events: none;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+@media (max-width: 640px) {
+  .admin-main { padding: 22px 14px 50px; }
+  .admin-nav-inner { padding: 0 14px; }
+  .admin-brand span:not(.v-mark) { display: none; }
+}

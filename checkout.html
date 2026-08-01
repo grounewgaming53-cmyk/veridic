@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout — VERIDIC</title>
+  <meta name="robots" content="noindex">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="enhancements.css">
+  <link rel="stylesheet" href="auth.css">
+  <link rel="stylesheet" href="checkout.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23f59e0b'/><text x='50' y='72' font-size='60' font-weight='900' text-anchor='middle' fill='%23000'>V</text></svg>">
+</head>
+<body>
+
+  <canvas id="particleCanvas"></canvas>
+
+  <nav class="nav scrolled" aria-label="Main navigation">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo" aria-label="VERIDIC Home">
+        <div class="v-mark">V</div>
+        VERIDIC
+      </a>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="docs.html">Documentation</a>
+        <a href="index.html#pricing">Pricing</a>
+      </div>
+      <div class="nav-cta" data-auth-slot="nav"></div>
+      <button class="hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <div class="mobile-menu" id="mobileMenu" role="dialog" aria-label="Mobile navigation">
+    <a href="index.html">Home</a>
+    <a href="docs.html">Documentation</a>
+    <a href="index.html#pricing">Pricing</a>
+    <div data-auth-slot="mobile" style="display:flex;flex-direction:column;gap:12px"></div>
+  </div>
+
+  <main class="pay-page">
+    <div class="container">
+
+      <div class="pay-steps">
+        <div class="pay-step active"><span class="dot">1</span> <span>Your details</span></div>
+        <div class="pay-step-sep"></div>
+        <div class="pay-step"><span class="dot">2</span> <span>Payment</span></div>
+        <div class="pay-step-sep"></div>
+        <div class="pay-step"><span class="dot">3</span> <span>Verification</span></div>
+        <div class="pay-step-sep"></div>
+        <div class="pay-step"><span class="dot">4</span> <span>Confirmation</span></div>
+      </div>
+
+      <div class="pay-grid">
+
+        <!-- ============ LEFT: FORM ============ -->
+        <div>
+          <span class="mode-chip" id="modeChip" hidden></span>
+
+          <h1 style="font-size:clamp(1.7rem,3.4vw,2.3rem);margin-bottom:10px">Complete your purchase</h1>
+          <p style="color:var(--text-secondary);font-size:0.97rem;margin-bottom:32px;max-width:56ch">
+            We'll send your license key and receipt to the phone number and email you enter below,
+            the moment payment is verified.
+          </p>
+
+          <div class="alert alert-warn" id="cancelledNotice" hidden role="status">
+            <i class="fas fa-circle-info"></i>
+            <span>Payment was cancelled. Nothing has been charged — you can try again below.</span>
+          </div>
+
+          <div class="alert alert-error" id="formError" hidden role="alert">
+            <i class="fas fa-triangle-exclamation"></i>
+            <span></span>
+          </div>
+
+          <form id="checkoutForm" novalidate>
+
+            <h3 style="font-size:1rem;margin-bottom:14px">Choose your plan</h3>
+            <div class="plan-options" id="planOptions">
+              <div style="color:var(--text-muted);font-size:0.88rem;padding:20px 0">
+                <i class="fas fa-circle-notch spin"></i> Loading plans…
+              </div>
+            </div>
+
+            <h3 style="font-size:1rem;margin:32px 0 14px">Where should we send the confirmation?</h3>
+
+            <div class="field">
+              <label for="buyerName">Full name</label>
+              <div class="field-input">
+                <i class="fas fa-user"></i>
+                <input type="text" id="buyerName" autocomplete="name" placeholder="Ada Lovelace" required>
+              </div>
+              <span class="field-error" data-error-for="buyerName"></span>
+            </div>
+
+            <div class="field">
+              <label for="buyerEmail">Email address</label>
+              <div class="field-input">
+                <i class="fas fa-envelope"></i>
+                <input type="email" id="buyerEmail" autocomplete="email" placeholder="you@example.com" required>
+              </div>
+              <span class="field-hint">Receipt, license key and activation instructions go here.</span>
+              <span class="field-error" data-error-for="buyerEmail"></span>
+            </div>
+
+            <div class="field">
+              <label for="buyerPhone">Mobile number</label>
+              <div class="phone-input">
+                <select id="countryCode" aria-label="Country dialling code">
+                  <option value="1">🇺🇸 +1</option>
+                  <option value="44">🇬🇧 +44</option>
+                  <option value="91">🇮🇳 +91</option>
+                  <option value="61">🇦🇺 +61</option>
+                  <option value="49">🇩🇪 +49</option>
+                  <option value="33">🇫🇷 +33</option>
+                  <option value="81">🇯🇵 +81</option>
+                  <option value="65">🇸🇬 +65</option>
+                  <option value="971">🇦🇪 +971</option>
+                  <option value="27">🇿🇦 +27</option>
+                  <option value="55">🇧🇷 +55</option>
+                  <option value="234">🇳🇬 +234</option>
+                </select>
+                <div class="field-input">
+                  <i class="fas fa-mobile-screen"></i>
+                  <input type="tel" id="buyerPhone" autocomplete="tel" placeholder="555 123 4567" required>
+                </div>
+              </div>
+              <span class="field-hint">A confirmation SMS is sent here once payment clears.</span>
+              <span class="field-error" data-error-for="buyerPhone"></span>
+            </div>
+
+            <div class="field-row" style="margin-top:24px">
+              <label class="checkbox">
+                <input type="checkbox" id="acceptPurchaseTerms">
+                I agree to the Terms of Service and Refund Policy
+              </label>
+            </div>
+            <span class="field-error" data-error-for="acceptPurchaseTerms" style="display:block;margin:-14px 0 16px"></span>
+
+            <button type="submit" class="btn btn-primary btn-block" id="payButton">
+              <i class="fas fa-lock"></i> Continue to secure payment
+            </button>
+
+            <p style="font-size:0.78rem;color:var(--text-muted);text-align:center;margin-top:14px;line-height:1.65">
+              A secure <span id="providerName">payment</span> window will open on this page.
+              <strong>Card and UPI details are never entered on, or sent to, this site.</strong>
+            </p>
+          </form>
+        </div>
+
+        <!-- ============ RIGHT: SUMMARY ============ -->
+        <aside class="pay-summary">
+          <div class="pay-summary-head">
+            <h3><i class="fas fa-receipt"></i> Order summary</h3>
+          </div>
+          <div class="pay-summary-body">
+            <div class="summary-line">
+              <span>Plan</span>
+              <span class="v" id="sumPlan">—</span>
+            </div>
+            <div class="summary-line">
+              <span>Billing</span>
+              <span class="v" id="sumInterval">—</span>
+            </div>
+            <div class="summary-line">
+              <span>Subtotal</span>
+              <span class="v" id="sumSubtotal">—</span>
+            </div>
+            <div class="summary-line">
+              <span>Tax</span>
+              <span class="v">Calculated at payment</span>
+            </div>
+            <div class="summary-total">
+              <span class="l">Total due today</span>
+              <span class="v" id="sumTotal">—</span>
+            </div>
+            <p class="summary-note" id="sumNote"></p>
+          </div>
+          <div class="trust-row">
+            <div class="trust-item">
+              <i class="fas fa-shield-halved"></i>
+              <span>Card and UPI details are entered inside the payment provider's own secure window — they never touch this site or its server.</span>
+            </div>
+            <div class="trust-item">
+              <i class="fas fa-signature"></i>
+              <span>Payment is confirmed by our server asking the payment provider directly, authenticated with a secret key the browser never sees. Nothing the browser merely reports is ever treated as proof.</span>
+            </div>
+            <div class="trust-item">
+              <i class="fas fa-paper-plane"></i>
+              <span>Your license key is sent by SMS and email the moment verification succeeds.</span>
+            </div>
+          </div>
+        </aside>
+
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom" style="border-top:none;padding-top:0">
+        <span>&copy; 2026 VERIDIC Project. All rights reserved.</span>
+        <div class="footer-social">
+          <a href="index.html" aria-label="Home"><i class="fas fa-house"></i></a>
+          <a href="docs.html" aria-label="Documentation"><i class="fas fa-book"></i></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="auth.js"></script>
+  <script src="checkout.js"></script>
+  <script src="enhancements.js"></script>
+  <script>
+  (function () {
+    'use strict';
+    const Pay = window.VeridicPay;
+    const Auth = window.VeridicAuth;
+    const $ = (id) => document.getElementById(id);
+    const params = new URLSearchParams(location.search);
+
+    let cfg = null;
+    let selectedPlan = null;
+
+    /* ---------------------------------------------------- mobile menu */
+    (function () {
+      const burger = $('hamburger'), menu = $('mobileMenu');
+      if (!burger || !menu) return;
+      burger.addEventListener('click', () => {
+        const open = menu.classList.toggle('active');
+        burger.setAttribute('aria-expanded', String(open));
+        document.body.style.overflow = open ? 'hidden' : '';
+      });
+    })();
+
+    if (params.get('cancelled') === '1') $('cancelledNotice').hidden = false;
+
+    /* ------------------------------------------------------- helpers */
+    function setError(id, msg) {
+      const slot = document.querySelector('[data-error-for="' + id + '"]');
+      const input = $(id);
+      if (slot) slot.textContent = msg || '';
+      if (input) {
+        if (msg) input.setAttribute('aria-invalid', 'true');
+        else input.removeAttribute('aria-invalid');
+      }
+    }
+
+    function clearErrors() {
+      document.querySelectorAll('[data-error-for]').forEach((s) => (s.textContent = ''));
+      document.querySelectorAll('[aria-invalid]').forEach((i) => i.removeAttribute('aria-invalid'));
+      $('formError').hidden = true;
+    }
+
+    function showFormError(msg) {
+      $('formError').querySelector('span').textContent = msg;
+      $('formError').hidden = false;
+      $('formError').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    /* ---------------------------------------------------------- mode */
+    function renderMode() {
+      const chip = $('modeChip');
+      const provider = $('providerName');
+
+      if (!cfg.online) {
+        chip.className = 'mode-chip offline';
+        chip.innerHTML = '<i class="fas fa-plug-circle-xmark"></i> Offline preview — no payment server';
+        chip.hidden = false;
+        provider.textContent = 'a simulated payment page';
+        return;
+      }
+      if (cfg.mode === 'demo') {
+        chip.className = 'mode-chip demo';
+        chip.innerHTML = '<i class="fas fa-flask"></i> Demo mode — no card will be charged';
+        chip.hidden = false;
+        provider.textContent = 'a simulated payment page';
+        return;
+      }
+      chip.className = 'mode-chip live';
+      chip.innerHTML = '<i class="fas fa-lock"></i> Secure checkout via Cashfree' +
+        (cfg.cashfreeEnv === 'sandbox' ? ' (sandbox)' : '');
+      chip.hidden = false;
+      provider.textContent = 'Cashfree';
+    }
+
+    /* --------------------------------------------------------- plans */
+    function renderPlans() {
+      const wrap = $('planOptions');
+      const requested = params.get('plan');
+
+      wrap.innerHTML = cfg.plans.map((plan, i) => {
+        const monthly = plan.interval === 'year' ? plan.amount / 12 : plan.amount;
+        const save = plan.interval === 'year'
+          ? '<span class="plan-save">2 months free</span>' : '';
+        return (
+          '<label class="plan-option" data-plan="' + plan.id + '">' + save +
+          '<input type="radio" name="plan" value="' + plan.id + '"' + (i === 0 ? ' checked' : '') + '>' +
+          '<div class="plan-option-body">' +
+          '<h4>' + plan.label + '</h4>' +
+          '<p>' + plan.description + '</p>' +
+          '</div>' +
+          '<div class="plan-option-price">' +
+          '<div class="amt">' + Pay.money(plan.amount, cfg.currency) + '</div>' +
+          '<div class="per">per ' + plan.interval +
+          (plan.interval === 'year' ? ' · ' + Pay.money(monthly, cfg.currency) + '/mo' : '') +
+          '</div></div></label>'
+        );
+      }).join('');
+
+      wrap.querySelectorAll('input[name="plan"]').forEach((input) => {
+        input.addEventListener('change', () => selectPlan(input.value));
+      });
+
+      const initial = cfg.plans.some((p) => p.id === requested) ? requested : cfg.plans[0].id;
+      const radio = wrap.querySelector('input[value="' + initial + '"]');
+      if (radio) radio.checked = true;
+      selectPlan(initial);
+    }
+
+    function selectPlan(planId) {
+      selectedPlan = cfg.plans.find((p) => p.id === planId) || cfg.plans[0];
+
+      document.querySelectorAll('.plan-option').forEach((el) => {
+        el.classList.toggle('selected', el.getAttribute('data-plan') === selectedPlan.id);
+      });
+
+      $('sumPlan').textContent = selectedPlan.name;
+      $('sumInterval').textContent = selectedPlan.interval === 'year' ? 'Yearly' : 'Monthly';
+      $('sumSubtotal').textContent = Pay.money(selectedPlan.amount, cfg.currency);
+      $('sumTotal').textContent = Pay.money(selectedPlan.amount, cfg.currency);
+      $('sumNote').textContent = selectedPlan.interval === 'year'
+        ? 'Billed once a year. Cancel any time before renewal.'
+        : 'Billed every month. Cancel any time.';
+    }
+
+    /* -------------------------------------------------------- prefill */
+    function prefill() {
+      const user = Auth.currentUser();
+      if (!user) return;
+      $('buyerName').value = user.name;
+      $('buyerEmail').value = user.email;
+    }
+
+    /* --------------------------------------------------------- submit */
+    $('checkoutForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      clearErrors();
+
+      const name = $('buyerName').value.trim();
+      const email = $('buyerEmail').value.trim();
+      const phoneRaw = $('buyerPhone').value.trim();
+      const countryCode = $('countryCode').value;
+      const accepted = $('acceptPurchaseTerms').checked;
+
+      let bad = false;
+      if (name.length < 2) { setError('buyerName', 'Please enter your full name.'); bad = true; }
+      if (!/^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/.test(email)) {
+        setError('buyerEmail', 'Enter a valid email address.'); bad = true;
+      }
+      if (!Pay.normalizePhone(phoneRaw, countryCode)) {
+        setError('buyerPhone', 'Enter a valid mobile number for the confirmation SMS.'); bad = true;
+      }
+      if (!accepted) { setError('acceptPurchaseTerms', 'Please accept the terms to continue.'); bad = true; }
+      if (bad) return;
+
+      const btn = $('payButton');
+      const IDLE_LABEL = '<i class="fas fa-lock"></i> Continue to secure payment';
+      const setBusy = (label) => { btn.setAttribute('aria-busy', 'true'); btn.innerHTML = '<i class="fas fa-circle-notch spin"></i> ' + label; };
+      const setIdle = () => { btn.setAttribute('aria-busy', 'false'); btn.innerHTML = IDLE_LABEL; };
+
+      setBusy('Starting secure checkout…');
+
+      try {
+        const user = Auth.currentUser();
+        const result = await Pay.createCheckout({
+          plan: selectedPlan.id,
+          name: name,
+          email: email,
+          phone: phoneRaw,
+          countryCode: countryCode,
+          accountEmail: user ? user.email : null,
+        });
+
+        /* Remember the reference so the order page can recover it even if
+           the payment window closes unexpectedly. */
+        try { sessionStorage.setItem('veridic.lastOrderRef', result.ref); } catch (_) {}
+
+        /* Demo and offline modes still navigate to the simulator page. Live
+           mode opens Cashfree's overlay right here — there is no redirect,
+           the buyer never leaves this site until payment is verified. */
+        if (result.mode !== 'live') {
+          location.href = result.url;
+          return;
+        }
+
+        setBusy('Opening secure payment window…');
+
+        await Pay.openCashfreeCheckout({
+          ref: result.ref,
+          cashfree: result.cashfree,
+        }, {
+          onVerified: () => { location.href = 'order.html?ref=' + encodeURIComponent(result.ref); },
+          onFailed: (message) => { setIdle(); showFormError(message); },
+          onDismiss: () => { setIdle(); },
+        });
+      } catch (err) {
+        setIdle();
+        if (err.field) setError('buyer' + err.field.charAt(0).toUpperCase() + err.field.slice(1), err.message);
+        else showFormError(err.message);
+      }
+    });
+
+    /* ----------------------------------------------------------- boot */
+    (async function init() {
+      cfg = await Pay.loadConfig();
+      if (!cfg.plans || !cfg.plans.length) cfg.plans = Pay.FALLBACK_PLANS;
+      renderMode();
+      renderPlans();
+      prefill();
+    })();
+  })();
+  </script>
+</body>
+</html>

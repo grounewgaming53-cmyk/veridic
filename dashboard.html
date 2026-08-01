@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — VERIDIC</title>
+  <meta name="robots" content="noindex">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="enhancements.css">
+  <link rel="stylesheet" href="auth.css">
+  <link rel="stylesheet" href="checkout.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23f59e0b'/><text x='50' y='72' font-size='60' font-weight='900' text-anchor='middle' fill='%23000'>V</text></svg>">
+  <script>
+    /* Guard before first paint so protected content never flashes. */
+    (function () {
+      try {
+        var s = JSON.parse(localStorage.getItem('veridic.session.v1') || 'null');
+        if (!s || !s.expiresAt || Date.now() > s.expiresAt) {
+          location.replace('login.html?next=dashboard.html');
+        }
+      } catch (e) {
+        location.replace('login.html?next=dashboard.html');
+      }
+    })();
+  </script>
+</head>
+<body>
+
+  <div class="scroll-progress"></div>
+  <canvas id="particleCanvas"></canvas>
+
+  <!-- ============ NAV ============ -->
+  <nav class="nav scrolled" id="mainNav" aria-label="Main navigation">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo" aria-label="VERIDIC Home">
+        <div class="v-mark">V</div>
+        VERIDIC
+      </a>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="docs.html">Documentation</a>
+        <a href="index.html#pricing">Pricing</a>
+        <a href="dashboard.html" class="active">Dashboard</a>
+      </div>
+      <div class="nav-cta" data-auth-slot="nav"></div>
+      <button class="hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <div class="mobile-menu" id="mobileMenu" role="dialog" aria-label="Mobile navigation">
+    <a href="index.html">Home</a>
+    <a href="docs.html">Documentation</a>
+    <a href="index.html#pricing">Pricing</a>
+    <a href="dashboard.html">Dashboard</a>
+    <div data-auth-slot="mobile" style="display:flex;flex-direction:column;gap:12px"></div>
+  </div>
+
+  <!-- ============ DASHBOARD ============ -->
+  <main class="dash">
+    <div class="container">
+
+      <div class="alert alert-success" id="welcomeBanner" hidden role="status">
+        <i class="fas fa-circle-check"></i>
+        <span>Account created. You're signed in — this dashboard is only reachable while a valid session exists.</span>
+      </div>
+
+      <div class="dash-head">
+        <div>
+          <span class="section-label">// Account</span>
+          <h1>Welcome back, <span class="text-gradient" id="greetName">there</span></h1>
+          <p>Your license, install status, and saved routines at a glance.</p>
+        </div>
+        <span class="plan-badge"><i class="fas fa-circle" style="font-size:0.5rem"></i> <span id="planBadge">Community</span></span>
+      </div>
+
+      <!-- Stat cards -->
+      <div class="dash-grid">
+        <div class="stat-card">
+          <div class="stat-label"><i class="fas fa-plug"></i> Install status</div>
+          <div class="stat-value">Not linked</div>
+          <div class="stat-sub">Run <code class="mono">veridic doctor</code> on your PC to generate a link code.</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label"><i class="fas fa-screwdriver-wrench"></i> Tools available</div>
+          <div class="stat-value">80+</div>
+          <div class="stat-sub">Registered in the core tool registry on your plan.</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label"><i class="fas fa-code-branch"></i> Latest version</div>
+          <div class="stat-value">1.0.0</div>
+          <div class="stat-sub">Initial release — The Truth-Speaking Engine.</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label"><i class="fas fa-right-to-bracket"></i> Sign-ins</div>
+          <div class="stat-value" id="loginCount">1</div>
+          <div class="stat-sub" id="lastLogin">First session</div>
+        </div>
+      </div>
+
+      <div class="dash-cols">
+
+        <!-- LEFT COLUMN -->
+        <div>
+          <!-- Profile -->
+          <section class="panel">
+            <div class="panel-head">
+              <h3><i class="fas fa-id-badge"></i> Profile</h3>
+              <button class="btn btn-secondary" id="editToggle" style="padding:7px 14px;font-size:0.8rem">
+                <i class="fas fa-pen"></i> Edit
+              </button>
+            </div>
+            <div class="panel-body">
+              <div class="alert alert-success" id="profileSaved" hidden role="status">
+                <i class="fas fa-circle-check"></i><span>Profile updated.</span>
+              </div>
+
+              <dl class="kv" id="profileView">
+                <dt>Name</dt><dd id="viewName">—</dd>
+                <dt>Email</dt><dd id="viewEmail">—</dd>
+                <dt>Plan</dt><dd id="viewPlan">—</dd>
+                <dt>Member since</dt><dd id="viewCreated">—</dd>
+                <dt>Password hash</dt><dd id="viewAlgo" class="mono" style="font-size:0.82rem">—</dd>
+              </dl>
+
+              <form id="profileForm" hidden>
+                <div class="field">
+                  <label for="editName">Full name</label>
+                  <div class="field-input">
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="editName" autocomplete="name">
+                  </div>
+                  <span class="field-error" data-error-for="editName"></span>
+                </div>
+                <div class="field">
+                  <label for="editPlan">Plan</label>
+                  <div class="field-input">
+                    <i class="fas fa-layer-group"></i>
+                    <select id="editPlan" style="width:100%;padding:13px 14px 13px 40px;background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:var(--radius-sm);color:var(--text-primary);font-family:var(--font-sans);font-size:0.92rem">
+                      <option>Community</option>
+                      <option>Pro</option>
+                      <option>Enterprise</option>
+                    </select>
+                  </div>
+                  <span class="field-hint">Plan selection here is a demo preference — it does not grant entitlements.</span>
+                </div>
+                <div style="display:flex;gap:10px;margin-top:20px">
+                  <button type="submit" class="btn btn-primary" style="flex:1;justify-content:center">
+                    <i class="fas fa-check"></i> Save
+                  </button>
+                  <button type="button" class="btn btn-secondary" id="cancelEdit">Cancel</button>
+                </div>
+              </form>
+            </div>
+          </section>
+
+          <!-- Security -->
+          <section class="panel">
+            <div class="panel-head">
+              <h3><i class="fas fa-lock"></i> Security</h3>
+            </div>
+            <div class="panel-body">
+              <div class="alert alert-success" id="pwSaved" hidden role="status">
+                <i class="fas fa-circle-check"></i><span>Password changed.</span>
+              </div>
+              <div class="alert alert-error" id="pwError" hidden role="alert">
+                <i class="fas fa-triangle-exclamation"></i><span></span>
+              </div>
+
+              <form id="passwordForm">
+                <div class="field">
+                  <label for="curPassword">Current password</label>
+                  <div class="field-input">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="curPassword" autocomplete="current-password" placeholder="••••••••">
+                  </div>
+                  <span class="field-error" data-error-for="curPassword"></span>
+                </div>
+                <div class="field">
+                  <label for="newPassword">New password</label>
+                  <div class="field-input">
+                    <i class="fas fa-key"></i>
+                    <input type="password" id="newPassword" autocomplete="new-password" placeholder="At least 8 characters">
+                    <button type="button" class="field-toggle" data-toggle-pw="newPassword" aria-label="Show password">
+                      <i class="fas fa-eye"></i>
+                    </button>
+                  </div>
+                  <span class="field-error" data-error-for="newPassword"></span>
+                </div>
+                <button type="submit" class="btn btn-secondary" id="pwSubmit">
+                  <i class="fas fa-rotate"></i> Update password
+                </button>
+              </form>
+            </div>
+          </section>
+
+          <!-- Danger zone -->
+          <section class="panel danger-zone">
+            <div class="panel-head">
+              <h3><i class="fas fa-triangle-exclamation"></i> Danger zone</h3>
+            </div>
+            <div class="panel-body">
+              <p class="panel-note" style="margin-bottom:18px">
+                Deleting removes this demo account and its activity log from this browser. It cannot be undone
+                and there is no server-side copy to restore from.
+              </p>
+              <button class="btn btn-danger" id="deleteAccount">
+                <i class="fas fa-trash"></i> Delete account
+              </button>
+            </div>
+          </section>
+        </div>
+
+        <!-- RIGHT COLUMN -->
+        <div>
+          <!-- Get started -->
+          <section class="panel">
+            <div class="panel-head">
+              <h3><i class="fas fa-rocket"></i> Get started</h3>
+            </div>
+            <div class="panel-body">
+              <div class="quick-links">
+                <a class="quick-link" href="docs.html#install">
+                  <i class="fas fa-download"></i>
+                  <strong>Install VERIDIC</strong>
+                  <span>Prerequisites &amp; one-command setup</span>
+                </a>
+                <a class="quick-link" href="docs.html#tools">
+                  <i class="fas fa-screwdriver-wrench"></i>
+                  <strong>Tool reference</strong>
+                  <span>Every registered tool, by category</span>
+                </a>
+                <a class="quick-link" href="docs.html#plugins">
+                  <i class="fas fa-puzzle-piece"></i>
+                  <strong>Write a plugin</strong>
+                  <span>Drop-in Python tools</span>
+                </a>
+                <a class="quick-link" href="docs.html#api">
+                  <i class="fas fa-server"></i>
+                  <strong>REST API</strong>
+                  <span>Local endpoints on :8989</span>
+                </a>
+              </div>
+            </div>
+          </section>
+
+          <!-- License -->
+          <section class="panel">
+            <div class="panel-head">
+              <h3><i class="fas fa-key"></i> License key</h3>
+            </div>
+            <div class="panel-body">
+              <p class="panel-note" style="margin-bottom:16px">
+                VERIDIC licenses are offline <strong>HMAC-SHA256(HWID, master&nbsp;secret)</strong> signatures —
+                bound to the machine that activated them. Store your key here so a reinstall is quick.
+              </p>
+              <div class="field" style="margin-bottom:12px">
+                <label for="licenseKey">Your key</label>
+                <div class="field-input">
+                  <i class="fas fa-fingerprint"></i>
+                  <input type="text" id="licenseKey" class="mono" placeholder="VRDC-XXXX-XXXX-XXXX-XXXX"
+                         style="font-family:var(--font-mono);font-size:0.85rem">
+                </div>
+              </div>
+              <button class="btn btn-secondary" id="saveLicense" style="width:100%;justify-content:center">
+                <i class="fas fa-floppy-disk"></i> Save to this browser
+              </button>
+              <p class="field-hint" style="margin-top:12px">
+                Saved locally only. The Community plan does not require a key.
+              </p>
+            </div>
+          </section>
+
+          <!-- Purchases -->
+          <section class="panel">
+            <div class="panel-head">
+              <h3><i class="fas fa-bag-shopping"></i> Purchases</h3>
+              <a href="index.html#pricing" class="btn btn-secondary" style="padding:7px 14px;font-size:0.8rem">
+                <i class="fas fa-plus"></i> Buy
+              </a>
+            </div>
+            <div id="purchaseList">
+              <div class="empty-state">
+                <i class="fas fa-circle-notch spin"></i>
+                Loading orders…
+              </div>
+            </div>
+          </section>
+
+          <!-- Activity -->
+          <section class="panel">
+            <div class="panel-head">
+              <h3><i class="fas fa-clock-rotate-left"></i> Recent activity</h3>
+            </div>
+            <div class="activity" id="activityList">
+              <div class="empty-state">
+                <i class="fas fa-inbox"></i>
+                No activity recorded yet.
+              </div>
+            </div>
+          </section>
+
+          <!-- Session -->
+          <section class="panel">
+            <div class="panel-head">
+              <h3><i class="fas fa-shield-halved"></i> Session</h3>
+            </div>
+            <div class="panel-body">
+              <dl class="kv">
+                <dt>Expires</dt><dd id="sessionExpiry">—</dd>
+                <dt>Storage</dt><dd>This browser only</dd>
+                <dt>Transport</dt><dd id="sessionCrypto">—</dd>
+              </dl>
+              <button class="btn btn-secondary" data-auth-signout style="width:100%;justify-content:center;margin-top:20px">
+                <i class="fas fa-right-from-bracket"></i> Sign out
+              </button>
+            </div>
+          </section>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom" style="border-top:none;padding-top:0">
+        <span>&copy; 2026 VERIDIC Project. All rights reserved.</span>
+        <div class="footer-social">
+          <a href="index.html" aria-label="Home"><i class="fas fa-house"></i></a>
+          <a href="docs.html" aria-label="Documentation"><i class="fas fa-book"></i></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="auth.js"></script>
+  <script src="checkout.js"></script>
+  <script src="script.js"></script>
+  <script src="enhancements.js"></script>
+  <script>
+  (function () {
+    'use strict';
+    const Auth = window.VeridicAuth;
+
+    if (!Auth.requireAuth()) return;
+    const user = Auth.currentUser();
+
+    /* ------------------------------------------------------------ helpers */
+    const $ = (id) => document.getElementById(id);
+    const esc = Auth.escapeHtml;
+
+    function fmtDate(ts) {
+      if (!ts) return '—';
+      return new Date(ts).toLocaleDateString(undefined, {
+        year: 'numeric', month: 'short', day: 'numeric',
+      });
+    }
+
+    function fmtDateTime(ts) {
+      if (!ts) return '—';
+      return new Date(ts).toLocaleString(undefined, {
+        month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit',
+      });
+    }
+
+    function relative(ts) {
+      const diff = Date.now() - ts;
+      const mins = Math.round(diff / 60000);
+      if (mins < 1) return 'just now';
+      if (mins < 60) return mins + 'm ago';
+      const hrs = Math.round(mins / 60);
+      if (hrs < 24) return hrs + 'h ago';
+      return Math.round(hrs / 24) + 'd ago';
+    }
+
+    /* --------------------------------------------------------- render user */
+    function render() {
+      const u = Auth.currentUser();
+      if (!u) { location.replace('login.html'); return; }
+
+      $('greetName').textContent = u.name.split(' ')[0];
+      $('planBadge').textContent = u.plan;
+      $('viewName').textContent = u.name;
+      $('viewEmail').textContent = u.email;
+      $('viewPlan').textContent = u.plan;
+      $('viewCreated').textContent = fmtDate(u.createdAt);
+      $('viewAlgo').textContent = Auth.strongCrypto
+        ? 'PBKDF2-HMAC-SHA256 · 150,000 iterations'
+        : 'Iterated SHA-256 · 20,000 rounds (file:// fallback)';
+      $('loginCount').textContent = String(u.loginCount);
+      $('lastLogin').textContent = u.loginCount > 1
+        ? 'Last: ' + fmtDateTime(u.lastLoginAt)
+        : 'First session';
+
+      $('editName').value = u.name;
+      $('editPlan').value = u.plan;
+
+      document.title = u.name.split(' ')[0] + "'s Dashboard — VERIDIC";
+      Auth.renderAuthSlots();
+    }
+
+    render();
+
+    if (new URLSearchParams(location.search).get('welcome') === '1') {
+      $('welcomeBanner').hidden = false;
+    }
+
+    /* -------------------------------------------------------- session card */
+    (function sessionCard() {
+      try {
+        const s = JSON.parse(localStorage.getItem('veridic.session.v1'));
+        $('sessionExpiry').textContent = fmtDateTime(s.expiresAt) +
+          (s.remember ? ' (remembered)' : '');
+      } catch (e) {
+        $('sessionExpiry').textContent = '—';
+      }
+      $('sessionCrypto').textContent = Auth.strongCrypto
+        ? 'Web Crypto available'
+        : 'file:// — JS fallback';
+    })();
+
+    /* -------------------------------------------------------------- edit */
+    const profileView = $('profileView');
+    const profileForm = $('profileForm');
+    const editToggle = $('editToggle');
+
+    function setEditing(on) {
+      profileView.hidden = on;
+      profileForm.hidden = !on;
+      editToggle.innerHTML = on
+        ? '<i class="fas fa-xmark"></i> Close'
+        : '<i class="fas fa-pen"></i> Edit';
+      if (on) $('editName').focus();
+    }
+
+    editToggle.addEventListener('click', () => setEditing(profileForm.hidden));
+    $('cancelEdit').addEventListener('click', () => setEditing(false));
+
+    profileForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      document.querySelector('[data-error-for="editName"]').textContent = '';
+
+      const res = Auth.updateProfile({ name: $('editName').value, plan: $('editPlan').value });
+      if (!res.ok) {
+        document.querySelector('[data-error-for="editName"]').textContent = res.error;
+        return;
+      }
+      setEditing(false);
+      render();
+      renderActivity();
+      const saved = $('profileSaved');
+      saved.hidden = false;
+      setTimeout(() => (saved.hidden = true), 3000);
+    });
+
+    /* ---------------------------------------------------------- password */
+    document.querySelectorAll('[data-toggle-pw]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const input = $(btn.getAttribute('data-toggle-pw'));
+        const showing = input.type === 'text';
+        input.type = showing ? 'password' : 'text';
+        btn.innerHTML = showing ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
+      });
+    });
+
+    const pwForm = $('passwordForm');
+    const pwError = $('pwError');
+    const pwSaved = $('pwSaved');
+    const pwSubmit = $('pwSubmit');
+
+    pwForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      pwError.hidden = true;
+      pwSaved.hidden = true;
+      document.querySelectorAll('#passwordForm [data-error-for]').forEach((s) => (s.textContent = ''));
+
+      const currentPassword = $('curPassword').value;
+      const newPassword = $('newPassword').value;
+
+      if (!currentPassword || !newPassword) {
+        pwError.querySelector('span').textContent = 'Both fields are required.';
+        pwError.hidden = false;
+        return;
+      }
+
+      pwSubmit.setAttribute('aria-busy', 'true');
+      pwSubmit.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Updating…';
+
+      const res = await Auth.changePassword({ currentPassword, newPassword });
+
+      pwSubmit.setAttribute('aria-busy', 'false');
+      pwSubmit.innerHTML = '<i class="fas fa-rotate"></i> Update password';
+
+      if (!res.ok) {
+        const slot = res.field === 'current' ? 'curPassword' : res.field === 'next' ? 'newPassword' : null;
+        if (slot) document.querySelector('[data-error-for="' + slot + '"]').textContent = res.error;
+        else { pwError.querySelector('span').textContent = res.error; pwError.hidden = false; }
+        return;
+      }
+
+      pwForm.reset();
+      pwSaved.hidden = false;
+      renderActivity();
+      render();
+      setTimeout(() => (pwSaved.hidden = true), 3000);
+    });
+
+    /* ----------------------------------------------------------- license */
+    const LICENSE_KEY = 'veridic.license.v1';
+    const licenseInput = $('licenseKey');
+    licenseInput.value = localStorage.getItem(LICENSE_KEY) || '';
+
+    $('saveLicense').addEventListener('click', () => {
+      const btn = $('saveLicense');
+      const value = licenseInput.value.trim();
+      if (value) localStorage.setItem(LICENSE_KEY, value);
+      else localStorage.removeItem(LICENSE_KEY);
+      btn.innerHTML = '<i class="fas fa-check"></i> Saved';
+      setTimeout(() => (btn.innerHTML = '<i class="fas fa-floppy-disk"></i> Save to this browser'), 2000);
+    });
+
+    /* ---------------------------------------------------------- activity */
+    const ICONS = {
+      signin: 'fa-right-to-bracket',
+      signout: 'fa-right-from-bracket',
+      signup: 'fa-user-plus',
+      'password-change': 'fa-key',
+      'profile-update': 'fa-pen',
+    };
+    const LABELS = {
+      signin: 'Signed in',
+      signout: 'Signed out',
+      signup: 'Account created',
+      'password-change': 'Password changed',
+      'profile-update': 'Profile updated',
+    };
+
+    function renderActivity() {
+      const items = Auth.activity();
+      const list = $('activityList');
+      if (!items.length) {
+        list.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i>No activity recorded yet.</div>';
+        return;
+      }
+      list.innerHTML = items.slice(0, 8).map((item) =>
+        '<div class="activity-item">' +
+        '<i class="fas ' + (ICONS[item.type] || 'fa-circle-dot') + '"></i>' +
+        '<span>' + esc(LABELS[item.type] || item.type) + '</span>' +
+        '<span class="activity-time">' + relative(item.at) + '</span>' +
+        '</div>'
+      ).join('');
+    }
+
+    renderActivity();
+
+    /* --------------------------------------------------------- purchases */
+
+    async function renderPurchases() {
+      const list = $('purchaseList');
+      const u = Auth.currentUser();
+      if (!u) return;
+
+      let orders = [];
+      try {
+        orders = await window.VeridicPay.ordersForAccount(u.email);
+      } catch (e) {
+        orders = [];
+      }
+
+      if (!orders.length) {
+        list.innerHTML =
+          '<div class="empty-state"><i class="fas fa-bag-shopping"></i>' +
+          'No purchases yet. <a href="index.html#pricing">Compare plans</a></div>';
+        return;
+      }
+
+      list.innerHTML = orders.map((o) => {
+        const cls = o.status === 'paid' ? 'sent' : o.status === 'failed' ? 'failed' : 'pending';
+        const label = o.status === 'paid' ? 'Paid' : o.status === 'failed' ? 'Failed' : 'Pending';
+        return (
+          '<a class="order-row" href="order.html?ref=' + encodeURIComponent(o.ref) + '" ' +
+          'style="text-decoration:none">' +
+          '<span class="ref">' + esc(o.ref) + '</span>' +
+          '<span class="plan">' + esc(o.plan.label) + '</span>' +
+          '<span class="amt">' + window.VeridicPay.money(o.amount, o.currency) + '</span>' +
+          '<span class="pill ' + cls + '">' + label + '</span>' +
+          '</a>'
+        );
+      }).join('');
+
+      /* A paid order is the real signal for entitlement — reflect it in the
+         plan badge rather than trusting the demo profile field alone. */
+      const paid = orders.find((o) => o.status === 'paid');
+      if (paid && u.plan === 'Community') {
+        Auth.updateProfile({ plan: 'Pro' });
+        render();
+      }
+    }
+
+    renderPurchases();
+
+    /* ------------------------------------------------------------ delete */
+    const delBtn = $('deleteAccount');
+    let armed = false;
+
+    delBtn.addEventListener('click', () => {
+      if (!armed) {
+        armed = true;
+        delBtn.innerHTML = '<i class="fas fa-triangle-exclamation"></i> Click again to confirm';
+        setTimeout(() => {
+          if (!armed) return;
+          armed = false;
+          delBtn.innerHTML = '<i class="fas fa-trash"></i> Delete account';
+        }, 5000);
+        return;
+      }
+      Auth.deleteAccount();
+      localStorage.removeItem(LICENSE_KEY);
+      location.replace('index.html');
+    });
+  })();
+  </script>
+</body>
+</html>

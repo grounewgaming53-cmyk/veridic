@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Order Status — VERIDIC</title>
+  <meta name="robots" content="noindex">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="enhancements.css">
+  <link rel="stylesheet" href="auth.css">
+  <link rel="stylesheet" href="checkout.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23f59e0b'/><text x='50' y='72' font-size='60' font-weight='900' text-anchor='middle' fill='%23000'>V</text></svg>">
+</head>
+<body>
+
+  <canvas id="particleCanvas"></canvas>
+
+  <nav class="nav scrolled" aria-label="Main navigation">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo" aria-label="VERIDIC Home">
+        <div class="v-mark">V</div>
+        VERIDIC
+      </a>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="docs.html">Documentation</a>
+        <a href="dashboard.html">Dashboard</a>
+      </div>
+      <div class="nav-cta" data-auth-slot="nav"></div>
+      <button class="hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <div class="mobile-menu" id="mobileMenu" role="dialog" aria-label="Mobile navigation">
+    <a href="index.html">Home</a>
+    <a href="docs.html">Documentation</a>
+    <a href="dashboard.html">Dashboard</a>
+    <div data-auth-slot="mobile" style="display:flex;flex-direction:column;gap:12px"></div>
+  </div>
+
+  <main class="pay-page">
+    <div class="container" style="max-width:820px">
+
+      <div class="pay-steps" id="orderSteps">
+        <div class="pay-step done"><span class="dot"><i class="fas fa-check"></i></span> <span>Your details</span></div>
+        <div class="pay-step-sep"></div>
+        <div class="pay-step done"><span class="dot"><i class="fas fa-check"></i></span> <span>Payment</span></div>
+        <div class="pay-step-sep"></div>
+        <div class="pay-step active" id="stepVerify"><span class="dot">3</span> <span>Verification</span></div>
+        <div class="pay-step-sep"></div>
+        <div class="pay-step" id="stepConfirm"><span class="dot">4</span> <span>Confirmation</span></div>
+      </div>
+
+      <!-- Not found -->
+      <div id="notFound" hidden>
+        <div class="order-hero">
+          <div class="order-icon failed"><i class="fas fa-question"></i></div>
+          <h1>Order not found</h1>
+          <p id="notFoundMsg">We couldn't find that order reference. If you just paid, check the link in your confirmation email.</p>
+          <div style="margin-top:26px">
+            <a href="index.html#pricing" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back to pricing</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main -->
+      <div id="orderView" hidden>
+
+        <div class="order-hero">
+          <div class="order-icon pending" id="orderIcon"><i class="fas fa-circle-notch spin"></i></div>
+          <h1 id="orderTitle">Verifying your payment…</h1>
+          <p id="orderMessage">
+            We're confirming the payment with the provider. This normally takes a few seconds —
+            you don't need to refresh.
+          </p>
+          <div class="order-ref">
+            Order <strong id="orderRef">—</strong>
+            <button id="copyRef" title="Copy reference"
+                    style="background:none;border:none;color:var(--text-muted);cursor:pointer;padding:2px 4px">
+              <i class="fas fa-copy"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- License -->
+        <div class="license-box" id="licenseBox" hidden>
+          <div class="lbl">Your license key</div>
+          <div class="license-key-row">
+            <code id="licenseKey">—</code>
+            <button class="btn btn-secondary" id="copyLicense" style="padding:10px 18px">
+              <i class="fas fa-copy"></i> Copy
+            </button>
+          </div>
+          <p style="font-size:0.8rem;color:var(--text-muted);margin:14px 0 0;line-height:1.65">
+            Paste this when you run <code style="font-family:var(--font-mono);color:var(--amber)">veridic start</code>.
+            The key binds to that machine's hardware ID on first activation.
+          </p>
+        </div>
+
+        <!-- Notifications -->
+        <section class="panel" id="deliveryPanel" hidden>
+          <div class="panel-head">
+            <h3><i class="fas fa-paper-plane"></i> Confirmation sent</h3>
+          </div>
+          <div class="delivery-list" id="deliveryList"></div>
+        </section>
+
+        <!-- Details -->
+        <section class="panel" style="margin-top:24px">
+          <div class="panel-head">
+            <h3><i class="fas fa-receipt"></i> Order details</h3>
+            <span id="statusPill" class="pill pending">Pending</span>
+          </div>
+          <div class="panel-body">
+            <dl class="kv">
+              <dt>Plan</dt><dd id="dPlan">—</dd>
+              <dt>Amount</dt><dd id="dAmount">—</dd>
+              <dt>Buyer</dt><dd id="dBuyer">—</dd>
+              <dt>Email</dt><dd id="dEmail">—</dd>
+              <dt>Mobile</dt><dd id="dPhone">—</dd>
+              <dt>Placed</dt><dd id="dCreated">—</dd>
+              <dt id="dPaidLabel" hidden>Paid</dt><dd id="dPaid" hidden>—</dd>
+              <dt id="dVerifiedLabel" hidden>Verified via</dt><dd id="dVerified" hidden>—</dd>
+            </dl>
+
+            <div id="receiptRow" hidden style="margin-top:20px">
+              <a id="receiptLink" href="#" target="_blank" rel="noopener" class="btn btn-secondary">
+                <i class="fas fa-file-invoice"></i> View card receipt
+              </a>
+            </div>
+          </div>
+        </section>
+
+        <!-- Pending actions -->
+        <div id="pendingActions" style="margin-top:24px;display:flex;gap:12px;flex-wrap:wrap">
+          <button class="btn btn-secondary" id="verifyNow">
+            <i class="fas fa-rotate"></i> Check again now
+          </button>
+          <a href="index.html#pricing" class="btn btn-secondary" style="border:none;color:var(--text-muted)">
+            Back to pricing
+          </a>
+        </div>
+
+        <!-- Paid actions -->
+        <div id="paidActions" hidden style="margin-top:28px;display:flex;gap:12px;flex-wrap:wrap">
+          <a href="dashboard.html" class="btn btn-primary"><i class="fas fa-gauge-high"></i> Go to dashboard</a>
+          <a href="docs.html#install" class="btn btn-secondary"><i class="fas fa-download"></i> Install guide</a>
+        </div>
+
+        <p id="pollNote" style="font-size:0.78rem;color:var(--text-muted);margin-top:22px;line-height:1.7"></p>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom" style="border-top:none;padding-top:0">
+        <span>&copy; 2026 VERIDIC Project. All rights reserved.</span>
+        <div class="footer-social">
+          <a href="index.html" aria-label="Home"><i class="fas fa-house"></i></a>
+          <a href="docs.html" aria-label="Documentation"><i class="fas fa-book"></i></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="auth.js"></script>
+  <script src="checkout.js"></script>
+  <script src="enhancements.js"></script>
+  <script>
+  (function () {
+    'use strict';
+    const Pay = window.VeridicPay;
+    const $ = (id) => document.getElementById(id);
+    const esc = window.VeridicAuth.escapeHtml;
+
+    let ref = new URLSearchParams(location.search).get('ref');
+    if (!ref) {
+      try { ref = sessionStorage.getItem('veridic.lastOrderRef'); } catch (_) {}
+    }
+
+    /* ---------------------------------------------------- mobile menu */
+    (function () {
+      const burger = $('hamburger'), menu = $('mobileMenu');
+      if (!burger || !menu) return;
+      burger.addEventListener('click', () => {
+        const open = menu.classList.toggle('active');
+        burger.setAttribute('aria-expanded', String(open));
+        document.body.style.overflow = open ? 'hidden' : '';
+      });
+    })();
+
+    if (!ref) {
+      $('notFound').hidden = false;
+      $('notFoundMsg').textContent = 'No order reference was supplied.';
+      $('orderSteps').hidden = true;
+      return;
+    }
+
+    /* --------------------------------------------------------- render */
+
+    function fmtDateTime(iso) {
+      if (!iso) return '—';
+      return new Date(iso).toLocaleString(undefined, {
+        year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit',
+      });
+    }
+
+    const CHANNEL_META = {
+      sms: { icon: 'fa-comment-sms', label: 'SMS' },
+      email: { icon: 'fa-envelope', label: 'Email' },
+    };
+
+    const STATUS_TEXT = {
+      sent: 'Delivered to the provider for sending.',
+      simulated: 'Simulated — the provider is not configured, so this was logged to the server console instead of sent.',
+      failed: 'Could not be sent.',
+      pending: 'Queued.',
+    };
+
+    function renderDelivery(order) {
+      const target = { sms: order.buyerPhoneMasked, email: order.buyerEmailMasked };
+
+      $('deliveryList').innerHTML = ['sms', 'email'].map((ch) => {
+        const meta = CHANNEL_META[ch];
+        const info = (order.notifications && order.notifications[ch]) || { status: 'pending' };
+        const status = info.status || 'pending';
+        const detail = info.detail || STATUS_TEXT[status] || '';
+
+        return (
+          '<div class="delivery-item">' +
+          '<i class="fas ' + meta.icon + '"></i>' +
+          '<div class="delivery-body">' +
+          '<h4>' + meta.label + ' to ' + esc(target[ch] || '—') +
+          ' <span class="pill ' + esc(status) + '">' + esc(status) + '</span></h4>' +
+          '<p>' + esc(detail) + '</p>' +
+          '</div></div>'
+        );
+      }).join('');
+
+      $('deliveryPanel').hidden = false;
+    }
+
+    function render(order) {
+      $('orderView').hidden = false;
+      $('orderRef').textContent = order.ref;
+
+      $('dPlan').textContent = order.plan.label;
+      $('dAmount').textContent = Pay.money(order.amount, order.currency);
+      $('dBuyer').textContent = order.buyerName;
+      $('dEmail').textContent = order.buyerEmailMasked;
+      $('dPhone').textContent = order.buyerPhoneMasked;
+      $('dCreated').textContent = fmtDateTime(order.createdAt);
+
+      const pill = $('statusPill');
+      pill.className = 'pill ' + (order.status === 'paid' ? 'sent' : order.status === 'failed' ? 'failed' : 'pending');
+      pill.textContent = order.status === 'paid' ? 'Paid' : order.status === 'failed' ? 'Failed' : 'Pending';
+
+      if (order.status === 'paid') {
+        $('orderIcon').className = 'order-icon paid';
+        $('orderIcon').innerHTML = '<i class="fas fa-check"></i>';
+        $('orderTitle').textContent = 'Payment confirmed';
+        $('orderMessage').textContent =
+          'Verified against the payment provider. Your license key is below, and a copy has been sent to your phone and email.';
+
+        $('stepVerify').className = 'pay-step done';
+        $('stepVerify').querySelector('.dot').innerHTML = '<i class="fas fa-check"></i>';
+        $('stepConfirm').className = 'pay-step done';
+        $('stepConfirm').querySelector('.dot').innerHTML = '<i class="fas fa-check"></i>';
+
+        if (order.licenseKey) {
+          $('licenseKey').textContent = order.licenseKey;
+          $('licenseBox').hidden = false;
+        }
+
+        $('dPaidLabel').hidden = false;
+        $('dPaid').hidden = false;
+        $('dPaid').textContent = fmtDateTime(order.paidAt);
+
+        if (order.verifiedVia) {
+          $('dVerifiedLabel').hidden = false;
+          $('dVerified').hidden = false;
+          $('dVerified').textContent = order.verifiedVia;
+        }
+
+        if (order.receiptUrl) {
+          $('receiptLink').href = order.receiptUrl;
+          $('receiptRow').hidden = false;
+        }
+
+        renderDelivery(order);
+        $('pendingActions').hidden = true;
+        $('paidActions').hidden = false;
+        $('pollNote').textContent = '';
+        return true;
+      }
+
+      if (order.status === 'failed') {
+        $('orderIcon').className = 'order-icon failed';
+        $('orderIcon').innerHTML = '<i class="fas fa-xmark"></i>';
+        $('orderTitle').textContent = 'Payment not completed';
+        $('orderMessage').textContent = order.failureReason ||
+          'The payment did not go through. Nothing has been charged.';
+
+        $('stepVerify').className = 'pay-step';
+        $('pendingActions').innerHTML =
+          '<a href="checkout.html?plan=' + encodeURIComponent(order.plan.id) + '" class="btn btn-primary">' +
+          '<i class="fas fa-rotate-left"></i> Try again</a>' +
+          '<a href="index.html#pricing" class="btn btn-secondary" style="border:none;color:var(--text-muted)">Back to pricing</a>';
+        $('pollNote').textContent = '';
+        return true;
+      }
+
+      return false; // still pending
+    }
+
+    /* ---------------------------------------------------------- poll */
+
+    let attempts = 0;
+    let timer = null;
+    const MAX_ATTEMPTS = 40;
+
+    async function tick() {
+      attempts++;
+      let order;
+
+      try {
+        order = await Pay.getOrder(ref);
+      } catch (err) {
+        clearInterval(timer);
+        $('orderView').hidden = true;
+        $('orderSteps').hidden = true;
+        $('notFound').hidden = false;
+        $('notFoundMsg').textContent = err.message || 'That order could not be loaded.';
+        return;
+      }
+
+      const settled = render(order);
+
+      if (settled) {
+        clearInterval(timer);
+        return;
+      }
+
+      if (attempts >= MAX_ATTEMPTS) {
+        clearInterval(timer);
+        $('pollNote').innerHTML =
+          'Still unconfirmed after a couple of minutes. If your card was charged, the payment is safe — ' +
+          'the confirmation webhook may just be delayed. Use <strong>Check again now</strong>, or contact ' +
+          'support quoting order <strong>' + esc(ref) + '</strong>.';
+      } else {
+        $('pollNote').textContent = 'Checking with the payment provider… (attempt ' + attempts + ')';
+      }
+    }
+
+    /* --------------------------------------------------------- actions */
+
+    $('verifyNow').addEventListener('click', async () => {
+      const btn = $('verifyNow');
+      btn.setAttribute('aria-busy', 'true');
+      btn.innerHTML = '<i class="fas fa-circle-notch spin"></i> Checking…';
+      try {
+        const order = await Pay.verifyOrder(ref);
+        if (order) render(order);
+      } catch (_) { /* surfaced by the next poll */ }
+      btn.setAttribute('aria-busy', 'false');
+      btn.innerHTML = '<i class="fas fa-rotate"></i> Check again now';
+    });
+
+    function copyToClipboard(text, btn, restoreHtml) {
+      const done = () => {
+        btn.innerHTML = '<i class="fas fa-check"></i>' + (restoreHtml ? ' Copied' : '');
+        setTimeout(() => (btn.innerHTML = restoreHtml || '<i class="fas fa-copy"></i>'), 1800);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done, () => {});
+      }
+    }
+
+    $('copyRef').addEventListener('click', () => copyToClipboard(ref, $('copyRef'), null));
+    $('copyLicense').addEventListener('click', () =>
+      copyToClipboard($('licenseKey').textContent, $('copyLicense'), '<i class="fas fa-copy"></i> Copy'));
+
+    /* ------------------------------------------------------------ boot */
+    tick();
+    timer = setInterval(tick, 3000);
+  })();
+  </script>
+</body>
+</html>

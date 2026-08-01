@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign In — VERIDIC</title>
+  <meta name="description" content="Sign in to your VERIDIC account to manage your license, workflows, and installation.">
+  <meta name="robots" content="noindex">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="enhancements.css">
+  <link rel="stylesheet" href="auth.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23f59e0b'/><text x='50' y='72' font-size='60' font-weight='900' text-anchor='middle' fill='%23000'>V</text></svg>">
+</head>
+<body>
+
+  <canvas id="particleCanvas"></canvas>
+
+  <main class="auth-page">
+
+    <!-- ============ LEFT: PITCH ============ -->
+    <aside class="auth-aside">
+      <div class="auth-aside-inner">
+        <a href="index.html" class="nav-logo" aria-label="VERIDIC home">
+          <div class="v-mark">V</div>
+          VERIDIC
+        </a>
+        <h2>Your machine.<br><span class="text-gradient">Your command.</span></h2>
+        <p>An account keeps your license key, saved automations, and setup notes in one place — so a reinstall takes minutes, not an evening.</p>
+
+        <div class="auth-perks">
+          <div class="auth-perk">
+            <i class="fas fa-key"></i>
+            <div>
+              <h4>License &amp; hardware binding</h4>
+              <p>VERIDIC licenses are HMAC-signed against your hardware ID. Keep the key here so a new machine is a two-minute reactivation.</p>
+            </div>
+          </div>
+          <div class="auth-perk">
+            <i class="fas fa-bolt"></i>
+            <div>
+              <h4>Automation library</h4>
+              <p>Save the <code>user_workflows.json</code> routines you build and reuse them across installs.</p>
+            </div>
+          </div>
+          <div class="auth-perk">
+            <i class="fas fa-book-open"></i>
+            <div>
+              <h4>Full tool reference</h4>
+              <p>80+ registered tools, every app screen, the REST API and the plugin SDK — all documented.</p>
+            </div>
+          </div>
+          <div class="auth-perk">
+            <i class="fas fa-shield-halved"></i>
+            <div>
+              <h4>Privacy by default</h4>
+              <p>Camera off unless explicitly enabled, face-ID gate fails closed, destructive tools require confirmation.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ============ RIGHT: FORMS ============ -->
+    <section class="auth-main">
+      <div class="auth-card">
+
+        <a href="index.html" class="nav-logo" aria-label="VERIDIC home" style="display:inline-flex">
+          <div class="v-mark">V</div>
+          VERIDIC
+        </a>
+
+        <div class="auth-tabs" role="tablist" aria-label="Authentication">
+          <button class="auth-tab" id="tabSignin" role="tab" aria-selected="true" aria-controls="panelSignin" type="button">Sign In</button>
+          <button class="auth-tab" id="tabSignup" role="tab" aria-selected="false" aria-controls="panelSignup" type="button">Create Account</button>
+        </div>
+
+        <!-- Global notice slot -->
+        <div class="alert alert-info" id="globalNotice" hidden role="status">
+          <i class="fas fa-circle-info"></i>
+          <span id="globalNoticeText"></span>
+        </div>
+
+        <!-- ---------- SIGN IN ---------- -->
+        <div class="auth-panel" id="panelSignin" role="tabpanel" aria-labelledby="tabSignin">
+          <h1>Welcome back</h1>
+          <p class="auth-sub">Sign in to reach your dashboard, license and saved routines.</p>
+
+          <div class="alert alert-error" id="signinError" hidden role="alert">
+            <i class="fas fa-triangle-exclamation"></i>
+            <span></span>
+          </div>
+
+          <form id="signinForm" novalidate>
+            <div class="field">
+              <label for="signinEmail">Email address</label>
+              <div class="field-input">
+                <i class="fas fa-envelope"></i>
+                <input type="email" id="signinEmail" name="email" autocomplete="username"
+                       placeholder="you@example.com" required>
+              </div>
+              <span class="field-error" data-error-for="signinEmail"></span>
+            </div>
+
+            <div class="field">
+              <label for="signinPassword">Password</label>
+              <div class="field-input">
+                <i class="fas fa-lock"></i>
+                <input type="password" id="signinPassword" name="password" autocomplete="current-password"
+                       placeholder="Your password" required>
+                <button type="button" class="field-toggle" data-toggle-pw="signinPassword"
+                        aria-label="Show password"><i class="fas fa-eye"></i></button>
+              </div>
+              <span class="field-error" data-error-for="signinPassword"></span>
+            </div>
+
+            <div class="field-row">
+              <label class="checkbox">
+                <input type="checkbox" id="rememberMe">
+                Keep me signed in
+              </label>
+              <a href="#" id="forgotLink" style="font-size:0.85rem">Forgot password?</a>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block" id="signinSubmit">
+              <i class="fas fa-right-to-bracket"></i> Sign In
+            </button>
+          </form>
+
+          <p class="auth-alt">
+            No account yet? <a href="#" data-switch-tab="signup">Create one free</a>
+          </p>
+        </div>
+
+        <!-- ---------- SIGN UP ---------- -->
+        <div class="auth-panel" id="panelSignup" role="tabpanel" aria-labelledby="tabSignup" hidden>
+          <h1>Create your account</h1>
+          <p class="auth-sub">Free forever on the Community plan. No card, no email confirmation.</p>
+
+          <div class="alert alert-error" id="signupError" hidden role="alert">
+            <i class="fas fa-triangle-exclamation"></i>
+            <span></span>
+          </div>
+
+          <form id="signupForm" novalidate>
+            <div class="field">
+              <label for="signupName">Full name</label>
+              <div class="field-input">
+                <i class="fas fa-user"></i>
+                <input type="text" id="signupName" name="name" autocomplete="name"
+                       placeholder="Ada Lovelace" required>
+              </div>
+              <span class="field-error" data-error-for="signupName"></span>
+            </div>
+
+            <div class="field">
+              <label for="signupEmail">Email address</label>
+              <div class="field-input">
+                <i class="fas fa-envelope"></i>
+                <input type="email" id="signupEmail" name="email" autocomplete="username"
+                       placeholder="you@example.com" required>
+              </div>
+              <span class="field-error" data-error-for="signupEmail"></span>
+            </div>
+
+            <div class="field">
+              <label for="signupPassword">Password</label>
+              <div class="field-input">
+                <i class="fas fa-lock"></i>
+                <input type="password" id="signupPassword" name="password" autocomplete="new-password"
+                       placeholder="At least 8 characters" required>
+                <button type="button" class="field-toggle" data-toggle-pw="signupPassword"
+                        aria-label="Show password"><i class="fas fa-eye"></i></button>
+              </div>
+              <div class="pw-meter" id="pwMeter" data-score="0" aria-hidden="true">
+                <span></span><span></span><span></span><span></span><span></span>
+              </div>
+              <span class="pw-label" id="pwLabel">Minimum 8 characters, with a letter and a number.</span>
+              <span class="field-error" data-error-for="signupPassword"></span>
+            </div>
+
+            <div class="field">
+              <label for="signupConfirm">Confirm password</label>
+              <div class="field-input">
+                <i class="fas fa-lock"></i>
+                <input type="password" id="signupConfirm" name="confirm" autocomplete="new-password"
+                       placeholder="Repeat your password" required>
+              </div>
+              <span class="field-error" data-error-for="signupConfirm"></span>
+            </div>
+
+            <div class="field-row">
+              <label class="checkbox">
+                <input type="checkbox" id="acceptTerms">
+                I agree to the Terms &amp; Privacy Policy
+              </label>
+            </div>
+            <span class="field-error" data-error-for="acceptTerms" style="margin-top:-14px;display:block"></span>
+
+            <button type="submit" class="btn btn-primary btn-block" id="signupSubmit">
+              <i class="fas fa-user-plus"></i> Create Account
+            </button>
+          </form>
+
+          <p class="auth-alt">
+            Already registered? <a href="#" data-switch-tab="signin">Sign in instead</a>
+          </p>
+        </div>
+
+        <p class="auth-foot">
+          <strong>Demo authentication.</strong> Accounts created here are stored only in this
+          browser's <code>localStorage</code> and never sent anywhere. Passwords are salted and
+          key-stretched before storage, but this is a front-end demo — not a security boundary.
+          Don't reuse a real password.
+          <a href="index.html">&larr; Back to site</a>
+        </p>
+
+      </div>
+    </section>
+  </main>
+
+  <script src="auth.js"></script>
+  <script src="enhancements.js"></script>
+  <script>
+  (function () {
+    'use strict';
+    const Auth = window.VeridicAuth;
+
+    // Already signed in? Go straight through.
+    if (Auth.redirectIfAuthenticated('dashboard.html')) return;
+
+    /* ------------------------------------------------------- tab switching */
+    const tabs = {
+      signin: { tab: document.getElementById('tabSignin'), panel: document.getElementById('panelSignin') },
+      signup: { tab: document.getElementById('tabSignup'), panel: document.getElementById('panelSignup') },
+    };
+
+    function activate(which, focus) {
+      Object.keys(tabs).forEach((key) => {
+        const isActive = key === which;
+        tabs[key].tab.setAttribute('aria-selected', String(isActive));
+        tabs[key].panel.hidden = !isActive;
+      });
+      if (focus) {
+        const first = tabs[which].panel.querySelector('input');
+        if (first) first.focus();
+      }
+      history.replaceState(null, '', which === 'signup' ? '#signup' : location.pathname + location.search);
+    }
+
+    tabs.signin.tab.addEventListener('click', () => activate('signin', true));
+    tabs.signup.tab.addEventListener('click', () => activate('signup', true));
+    document.querySelectorAll('[data-switch-tab]').forEach((link) => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        activate(link.getAttribute('data-switch-tab'), true);
+      });
+    });
+
+    if (location.hash === '#signup') activate('signup', false);
+
+    /* ------------------------------------------------------ password reveal */
+    document.querySelectorAll('[data-toggle-pw]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const input = document.getElementById(btn.getAttribute('data-toggle-pw'));
+        const showing = input.type === 'text';
+        input.type = showing ? 'password' : 'text';
+        btn.innerHTML = showing ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
+        btn.setAttribute('aria-label', showing ? 'Show password' : 'Hide password');
+      });
+    });
+
+    /* ------------------------------------------------------------- helpers */
+    function setError(inputId, message) {
+      const slot = document.querySelector('[data-error-for="' + inputId + '"]');
+      const input = document.getElementById(inputId);
+      if (slot) slot.textContent = message || '';
+      if (input) {
+        if (message) input.setAttribute('aria-invalid', 'true');
+        else input.removeAttribute('aria-invalid');
+      }
+    }
+
+    function clearErrors(formEl) {
+      formEl.querySelectorAll('[data-error-for]').forEach((s) => (s.textContent = ''));
+      formEl.querySelectorAll('[aria-invalid]').forEach((i) => i.removeAttribute('aria-invalid'));
+    }
+
+    function showAlert(el, message) {
+      el.querySelector('span').textContent = message;
+      el.hidden = false;
+    }
+
+    function hideAlert(el) {
+      el.hidden = true;
+    }
+
+    function busy(btn, isBusy, busyLabel, idleHtml) {
+      btn.setAttribute('aria-busy', String(isBusy));
+      btn.innerHTML = isBusy
+        ? '<i class="fas fa-circle-notch fa-spin"></i> ' + busyLabel
+        : idleHtml;
+    }
+
+    /* ------------------------------------------- environment-level warnings */
+    const notice = document.getElementById('globalNotice');
+    const noticeText = document.getElementById('globalNoticeText');
+
+    if (!Auth.storageAvailable) {
+      notice.className = 'alert alert-error';
+      noticeText.textContent =
+        'This browser is blocking localStorage (private mode or a site setting). Demo accounts cannot be saved.';
+      notice.hidden = false;
+    } else if (!Auth.strongCrypto) {
+      notice.className = 'alert alert-warn';
+      noticeText.textContent =
+        'Opened over file:// — Web Crypto is unavailable, so a weaker JavaScript fallback hashes passwords. ' +
+        'Serve the folder over http:// for the stronger PBKDF2 path.';
+      notice.hidden = false;
+    }
+
+    /* --------------------------------------------------- password strength */
+    const pwInput = document.getElementById('signupPassword');
+    const pwMeter = document.getElementById('pwMeter');
+    const pwLabel = document.getElementById('pwLabel');
+    const LABELS = ['Minimum 8 characters, with a letter and a number.',
+                    'Very weak', 'Weak', 'Fair', 'Strong', 'Very strong'];
+
+    pwInput.addEventListener('input', () => {
+      const score = pwInput.value ? Auth.passwordScore(pwInput.value) : 0;
+      pwMeter.setAttribute('data-score', String(score));
+      pwLabel.textContent = LABELS[score];
+    });
+
+    /* ------------------------------------------------------------- sign in */
+    const signinForm = document.getElementById('signinForm');
+    const signinError = document.getElementById('signinError');
+    const signinBtn = document.getElementById('signinSubmit');
+    const SIGNIN_IDLE = '<i class="fas fa-right-to-bracket"></i> Sign In';
+
+    signinForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      clearErrors(signinForm);
+      hideAlert(signinError);
+
+      const email = document.getElementById('signinEmail').value;
+      const password = document.getElementById('signinPassword').value;
+      const remember = document.getElementById('rememberMe').checked;
+
+      let bad = false;
+      if (!email.trim()) { setError('signinEmail', 'Email is required.'); bad = true; }
+      if (!password) { setError('signinPassword', 'Password is required.'); bad = true; }
+      if (bad) return;
+
+      busy(signinBtn, true, 'Verifying…');
+      const res = await Auth.signIn({ email, password, remember });
+      busy(signinBtn, false, '', SIGNIN_IDLE);
+
+      if (!res.ok) {
+        showAlert(signinError, res.error);
+        return;
+      }
+
+      const next = new URLSearchParams(location.search).get('next');
+      const target = next && /^[\w.-]+\.html$/.test(next) ? next : 'dashboard.html';
+      location.href = target;
+    });
+
+    /* ------------------------------------------------------------- sign up */
+    const signupForm = document.getElementById('signupForm');
+    const signupError = document.getElementById('signupError');
+    const signupBtn = document.getElementById('signupSubmit');
+    const SIGNUP_IDLE = '<i class="fas fa-user-plus"></i> Create Account';
+
+    signupForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      clearErrors(signupForm);
+      hideAlert(signupError);
+
+      const name = document.getElementById('signupName').value;
+      const email = document.getElementById('signupEmail').value;
+      const password = document.getElementById('signupPassword').value;
+      const confirm = document.getElementById('signupConfirm').value;
+      const accepted = document.getElementById('acceptTerms').checked;
+
+      let bad = false;
+      if (password !== confirm) { setError('signupConfirm', 'Passwords do not match.'); bad = true; }
+      if (!accepted) { setError('acceptTerms', 'Please accept the terms to continue.'); bad = true; }
+      if (bad) return;
+
+      busy(signupBtn, true, 'Creating account…');
+      const res = await Auth.signUp({ name, email, password, plan: 'Community' });
+      busy(signupBtn, false, '', SIGNUP_IDLE);
+
+      if (!res.ok) {
+        if (res.field) setError('signup' + res.field.charAt(0).toUpperCase() + res.field.slice(1), res.error);
+        else showAlert(signupError, res.error);
+        return;
+      }
+
+      location.href = 'dashboard.html?welcome=1';
+    });
+
+    /* --------------------------------------------------------- forgot flow */
+    document.getElementById('forgotLink').addEventListener('click', (e) => {
+      e.preventDefault();
+      notice.className = 'alert alert-info';
+      noticeText.textContent =
+        'Demo accounts are stored only in this browser, so there is no server to email a reset link. ' +
+        'Clear the site data for this page and create the account again.';
+      notice.hidden = false;
+      notice.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+  })();
+  </script>
+</body>
+</html>

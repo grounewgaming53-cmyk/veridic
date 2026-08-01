@@ -1,0 +1,35 @@
+# ---------------------------------------------------------------------
+# Secrets — NEVER commit these.
+# .env holds the Cashfree secret key, Twilio/Resend keys and the admin
+# password hash. On Render (or any host) these are set in the dashboard's
+# environment variables instead, never in the repo.
+# ---------------------------------------------------------------------
+.env
+.env.*
+!.env.example
+server/.env
+server/.env.*
+!server/.env.example
+
+# ---------------------------------------------------------------------
+# Customer data. orders.db contains real names, emails, phone numbers and
+# license keys. It is generated at runtime and must never enter git.
+# ---------------------------------------------------------------------
+*.db
+*.db-wal
+*.db-shm
+
+# Dependencies
+node_modules/
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+.vscode/
+.idea/
+
+# Logs
+*.log
+npm-debug.log*

@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — VERIDIC</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="auth.css">
+  <link rel="stylesheet" href="admin.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%238b5cf6'/><text x='50' y='72' font-size='60' font-weight='900' text-anchor='middle' fill='%23fff'>V</text></svg>">
+</head>
+<body class="admin-body">
+
+  <!-- ============ LOGIN GATE ============ -->
+  <div class="gate" id="gate" hidden>
+    <div class="gate-card">
+      <div class="gate-mark">
+        <div class="v-mark">V</div>
+        <span>VERIDIC</span>
+      </div>
+
+      <h1>Admin sign-in</h1>
+      <p>This area is private. Your session is held in a secure, HttpOnly cookie that
+         JavaScript cannot read.</p>
+
+      <div class="alert alert-error" id="gateError" hidden role="alert">
+        <i class="fas fa-triangle-exclamation"></i>
+        <span></span>
+      </div>
+
+      <div class="alert alert-warn" id="notConfigured" hidden role="status">
+        <i class="fas fa-circle-info"></i>
+        <span>Admin access isn't configured on this server yet. Run
+          <code style="font-family:var(--font-mono)">node scripts/hash-admin-password.mjs</code>
+          in the <code style="font-family:var(--font-mono)">server/</code> folder and add the
+          printed line to <code style="font-family:var(--font-mono)">.env</code>.</span>
+      </div>
+
+      <form id="gateForm">
+        <div class="field">
+          <label for="adminPassword">Password</label>
+          <div class="field-input">
+            <i class="fas fa-key"></i>
+            <input type="password" id="adminPassword" autocomplete="current-password"
+                   placeholder="Admin password" required>
+            <button type="button" class="field-toggle" id="revealPw" aria-label="Show password">
+              <i class="fas fa-eye"></i>
+            </button>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block" id="gateSubmit">
+          <i class="fas fa-right-to-bracket"></i> Sign in
+        </button>
+      </form>
+
+      <p style="margin-top:20px;margin-bottom:0;font-size:0.78rem">
+        <a href="index.html" style="color:var(--text-muted)">&larr; Back to site</a>
+      </p>
+    </div>
+  </div>
+
+  <!-- ============ CONSOLE ============ -->
+  <div id="console" hidden>
+
+    <nav class="admin-nav">
+      <div class="admin-nav-inner">
+        <a href="index.html" class="admin-brand">
+          <div class="v-mark">V</div>
+          <span>VERIDIC</span>
+        </a>
+        <span class="admin-tag">Admin</span>
+        <span class="admin-tag" id="modeTag" hidden></span>
+        <div class="admin-nav-spacer"></div>
+        <button class="btn btn-secondary" id="refreshBtn" style="padding:7px 15px;font-size:0.8rem">
+          <i class="fas fa-rotate"></i> Refresh
+        </button>
+        <button class="btn btn-secondary" id="signOutBtn" style="padding:7px 15px;font-size:0.8rem">
+          <i class="fas fa-arrow-right-from-bracket"></i> Sign out
+        </button>
+      </div>
+    </nav>
+
+    <main class="admin-main">
+
+      <div class="stat-grid">
+        <div class="stat revenue"><div class="k">Revenue</div><div class="v" id="sRevenue">—</div></div>
+        <div class="stat paid"><div class="k">Paid orders</div><div class="v" id="sPaid">—</div></div>
+        <div class="stat pending"><div class="k">Pending</div><div class="v" id="sPending">—</div></div>
+        <div class="stat failed"><div class="k">Failed</div><div class="v" id="sFailed">—</div></div>
+        <div class="stat"><div class="k">Total</div><div class="v" id="sTotal">—</div></div>
+      </div>
+
+      <div class="admin-panel">
+        <div class="admin-panel-head">
+          <h2><i class="fas fa-users"></i> Customers &amp; orders</h2>
+          <div class="filters">
+            <button class="filter-btn active" data-filter="">All</button>
+            <button class="filter-btn" data-filter="paid">Paid</button>
+            <button class="filter-btn" data-filter="pending">Pending</button>
+            <button class="filter-btn" data-filter="failed">Failed</button>
+          </div>
+        </div>
+
+        <div class="table-scroll">
+          <table class="orders" id="ordersTable" hidden>
+            <thead>
+              <tr>
+                <th>Order</th>
+                <th>Status</th>
+                <th>Customer</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Plan</th>
+                <th>Amount</th>
+                <th>License</th>
+                <th>Notified</th>
+                <th>Placed</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="ordersBody"></tbody>
+          </table>
+        </div>
+
+        <div class="admin-empty" id="ordersEmpty">
+          <i class="fas fa-circle-notch spin"></i>
+          Loading…
+        </div>
+      </div>
+
+      <div class="danger-zone">
+        <p><strong style="color:var(--text-secondary)">Revoke all sessions.</strong>
+           Immediately signs out every admin session everywhere, including this one.
+           Use this if you think someone else obtained access.</p>
+        <button class="btn-danger" id="revokeBtn">
+          <i class="fas fa-user-slash"></i> Revoke all sessions
+        </button>
+      </div>
+
+    </main>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+  (function () {
+    'use strict';
+
+    const $ = (id) => document.getElementById(id);
+    const API = '/api/admin';
+
+    /* Sent on every state-changing request. A cross-site <form> cannot set
+       a custom header, so this is a second CSRF layer behind SameSite. */
+    const ADMIN_HEADER = { 'X-Veridic-Admin': '1' };
+
+    const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) =>
+      ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+    let currency = 'inr';
+    let activeFilter = '';
+
+    /* ---------------------------------------------------------- helpers */
+
+    function money(amount, cur) {
+      try {
+        return new Intl.NumberFormat(undefined, {
+          style: 'currency', currency: String(cur || 'inr').toUpperCase(),
+          minimumFractionDigits: 2,
+        }).format(amount / 100);
+      } catch (_) {
+        return (amount / 100).toFixed(2);
+      }
+    }
+
+    function fmtDate(iso) {
+      if (!iso) return '—';
+      return new Date(iso).toLocaleString(undefined, {
+        month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit',
+      });
+    }
+
+    let toastTimer = null;
+    function toast(message) {
+      const t = $('toast');
+      t.textContent = message;
+      t.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => t.classList.remove('show'), 2400);
+    }
+
+    async function api(path, options) {
+      const res = await fetch(API + path, Object.assign({
+        headers: { 'Content-Type': 'application/json' },
+      }, options || {}));
+
+      let payload = null;
+      try { payload = await res.json(); } catch (_) { /* non-JSON */ }
+
+      if (!res.ok) {
+        const err = new Error((payload && payload.error) || ('Request failed (' + res.status + ')'));
+        err.status = res.status;
+        throw err;
+      }
+      return payload;
+    }
+
+    /* Any 401 from an authenticated call means the session expired or was
+       revoked — drop straight back to the gate rather than showing a
+       half-broken console. */
+    function handleAuthLoss(err) {
+      if (err && err.status === 401) {
+        showGate();
+        return true;
+      }
+      return false;
+    }
+
+    /* ------------------------------------------------------------- gate */
+
+    /* Wipe the password out of the DOM and re-mask the field. Called on
+       every transition in or out of the gate so the plaintext never
+       lingers in memory after it has been used, and a revealed field
+       never stays revealed for the next person at the keyboard. */
+    function clearPasswordField() {
+      const input = $('adminPassword');
+      input.value = '';
+      input.type = 'password';
+      const icon = $('revealPw').querySelector('i');
+      icon.className = 'fas fa-eye';
+      $('revealPw').setAttribute('aria-label', 'Show password');
+    }
+
+    function showGate() {
+      $('console').hidden = true;
+      $('gate').hidden = false;
+      clearPasswordField();
+      setTimeout(() => $('adminPassword').focus(), 60);
+    }
+
+    function showConsole() {
+      clearPasswordField();
+      $('gate').hidden = true;
+      $('console').hidden = false;
+      loadAll();
+    }
+
+    $('revealPw').addEventListener('click', () => {
+      const input = $('adminPassword');
+      const icon = $('revealPw').querySelector('i');
+      const show = input.type === 'password';
+      input.type = show ? 'text' : 'password';
+      icon.className = show ? 'fas fa-eye-slash' : 'fas fa-eye';
+      $('revealPw').setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+    });
+
+    $('gateForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      $('gateError').hidden = true;
+
+      const password = $('adminPassword').value;
+      if (!password) return;
+
+      const btn = $('gateSubmit');
+      btn.setAttribute('aria-busy', 'true');
+      btn.innerHTML = '<i class="fas fa-circle-notch spin"></i> Checking…';
+
+      try {
+        await api('/login', {
+          method: 'POST',
+          headers: Object.assign({ 'Content-Type': 'application/json' }, ADMIN_HEADER),
+          body: JSON.stringify({ password: password }),
+        });
+        showConsole();
+      } catch (err) {
+        $('gateError').querySelector('span').textContent = err.message;
+        $('gateError').hidden = false;
+        $('adminPassword').select();
+      } finally {
+        btn.setAttribute('aria-busy', 'false');
+        btn.innerHTML = '<i class="fas fa-right-to-bracket"></i> Sign in';
+      }
+    });
+
+    /* ---------------------------------------------------------- console */
+
+    async function loadOverview() {
+      const data = await api('/overview');
+      currency = data.currency || 'inr';
+
+      $('sRevenue').textContent = money(data.stats.revenue, currency);
+      $('sPaid').textContent = data.stats.paid;
+      $('sPending').textContent = data.stats.pending;
+      $('sFailed').textContent = data.stats.failed;
+      $('sTotal').textContent = data.stats.total;
+
+      const tag = $('modeTag');
+      tag.textContent = data.mode === 'live' ? 'Live payments' : 'Demo mode';
+      tag.hidden = false;
+    }
+
+    function notifiedCell(order) {
+      const bits = [];
+      const sms = order.notifications.sms.status;
+      const email = order.notifications.email.status;
+      const pill = (label, status) =>
+        '<span class="pill ' + esc(status) + '" title="' + esc(order.notifications[label === 'SMS' ? 'sms' : 'email'].detail || '') + '">' +
+        esc(label) + '</span>';
+      bits.push(pill('SMS', sms));
+      bits.push(pill('Email', email));
+      return '<span style="display:flex;gap:5px">' + bits.join('') + '</span>';
+    }
+
+    async function loadOrders() {
+      const query = activeFilter ? '?status=' + encodeURIComponent(activeFilter) : '';
+      const data = await api('/orders' + query);
+      const orders = data.orders || [];
+      currency = data.currency || currency;
+
+      const table = $('ordersTable');
+      const empty = $('ordersEmpty');
+
+      if (!orders.length) {
+        table.hidden = true;
+        empty.hidden = false;
+        empty.innerHTML = '<i class="fas fa-inbox"></i>' +
+          (activeFilter ? 'No ' + esc(activeFilter) + ' orders.' : 'No orders yet.');
+        return;
+      }
+
+      $('ordersBody').innerHTML = orders.map((o) => {
+        const statusClass = o.status === 'paid' ? 'sent' : o.status === 'failed' ? 'failed' : 'pending';
+        const statusLabel = o.status === 'paid' ? 'Paid' : o.status === 'failed' ? 'Failed' : 'Pending';
+
+        return '<tr>' +
+          '<td><span class="cell-ref copyable" data-copy="' + esc(o.ref) + '">' + esc(o.ref) + '</span></td>' +
+          '<td><span class="pill ' + statusClass + '">' + statusLabel + '</span></td>' +
+          '<td class="cell-name">' + esc(o.buyerName) + '</td>' +
+          '<td><span class="cell-contact copyable" data-copy="' + esc(o.buyerEmail) + '">' + esc(o.buyerEmail) + '</span></td>' +
+          '<td><span class="cell-contact copyable" data-copy="' + esc(o.buyerPhone) + '">' + esc(o.buyerPhone) + '</span></td>' +
+          '<td>' + esc(o.plan.label) + '</td>' +
+          '<td class="cell-amt">' + money(o.amount, o.currency || currency) + '</td>' +
+          '<td>' + (o.licenseKey
+            ? '<span class="cell-contact copyable" data-copy="' + esc(o.licenseKey) + '">' + esc(o.licenseKey) + '</span>'
+            : '<span style="color:var(--text-muted)">—</span>') + '</td>' +
+          '<td>' + notifiedCell(o) + '</td>' +
+          '<td class="cell-date">' + esc(fmtDate(o.createdAt)) + '</td>' +
+          '<td>' + (o.status === 'pending'
+            ? '<button class="filter-btn" data-markpaid="' + esc(o.ref) + '">Mark paid</button>'
+            : '') + '</td>' +
+          '</tr>';
+      }).join('');
+
+      table.hidden = false;
+      empty.hidden = true;
+    }
+
+    async function loadAll() {
+      try {
+        await Promise.all([loadOverview(), loadOrders()]);
+      } catch (err) {
+        if (handleAuthLoss(err)) return;
+        toast(err.message);
+      }
+    }
+
+    /* ---------------------------------------------------------- actions */
+
+    /* Delegated so it keeps working after every table re-render. */
+    document.addEventListener('click', async (e) => {
+      const copyEl = e.target.closest('[data-copy]');
+      if (copyEl) {
+        const text = copyEl.getAttribute('data-copy');
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(
+            () => toast('Copied: ' + text),
+            () => toast('Could not copy')
+          );
+        }
+        return;
+      }
+
+      const markBtn = e.target.closest('[data-markpaid]');
+      if (markBtn) {
+        const ref = markBtn.getAttribute('data-markpaid');
+        if (!confirm('Mark ' + ref + ' as paid?\n\nOnly do this if you have confirmed the money actually arrived.')) return;
+
+        markBtn.disabled = true;
+        markBtn.textContent = 'Working…';
+        try {
+          await api('/orders/' + encodeURIComponent(ref) + '/mark-paid', {
+            method: 'POST',
+            headers: Object.assign({ 'Content-Type': 'application/json' }, ADMIN_HEADER),
+          });
+          toast(ref + ' marked paid');
+          loadAll();
+        } catch (err) {
+          if (handleAuthLoss(err)) return;
+          toast(err.message);
+          markBtn.disabled = false;
+          markBtn.textContent = 'Mark paid';
+        }
+      }
+    });
+
+    document.querySelectorAll('.filter-btn[data-filter]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-btn[data-filter]').forEach((b) => b.classList.remove('active'));
+        btn.classList.add('active');
+        activeFilter = btn.getAttribute('data-filter');
+        loadOrders().catch((err) => { if (!handleAuthLoss(err)) toast(err.message); });
+      });
+    });
+
+    $('refreshBtn').addEventListener('click', () => {
+      loadAll();
+      toast('Refreshed');
+    });
+
+    $('signOutBtn').addEventListener('click', async () => {
+      try {
+        await api('/logout', {
+          method: 'POST',
+          headers: Object.assign({ 'Content-Type': 'application/json' }, ADMIN_HEADER),
+        });
+      } catch (_) { /* sign out locally regardless */ }
+      showGate();
+    });
+
+    $('revokeBtn').addEventListener('click', async () => {
+      if (!confirm('Revoke ALL admin sessions?\n\nYou will be signed out immediately and will need to sign in again.')) return;
+      try {
+        await api('/revoke-all', {
+          method: 'POST',
+          headers: Object.assign({ 'Content-Type': 'application/json' }, ADMIN_HEADER),
+        });
+      } catch (_) { /* fall through to the gate anyway */ }
+      showGate();
+    });
+
+    /* ------------------------------------------------------------- boot */
+
+    (async function init() {
+      try {
+        const status = await api('/status');
+
+        if (!status.configured) {
+          $('notConfigured').hidden = false;
+          $('gateForm').hidden = true;
+          $('gate').hidden = false;
+          return;
+        }
+
+        if (status.signedIn) showConsole();
+        else showGate();
+      } catch (_) {
+        /* No server reachable at all — the admin console is server-only by
+           design, so say so plainly rather than showing a dead form. */
+        $('gate').hidden = false;
+        $('gateForm').hidden = true;
+        $('notConfigured').hidden = false;
+        $('notConfigured').querySelector('span').textContent =
+          'Cannot reach the server. The admin console requires the Node server to be running — ' +
+          'it does not work on static hosting such as GitHub Pages.';
+      }
+    })();
+  })();
+  </script>
+</body>
+</html>

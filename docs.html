@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Documentation — VERIDIC</title>
+  <meta name="description" content="Complete VERIDIC reference: every registered tool, the boot chain, voice pipeline, plugin SDK, REST API, security model and configuration.">
+  <meta name="keywords" content="VERIDIC docs, AI assistant documentation, tool reference, agentic OS, LiveKit, Gemini Live, plugin SDK">
+  <meta property="og:title" content="VERIDIC Documentation">
+  <meta property="og:description" content="Every tool, every screen, every endpoint — documented.">
+  <meta property="og:type" content="article">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="enhancements.css">
+  <link rel="stylesheet" href="auth.css">
+  <link rel="stylesheet" href="docs.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23f59e0b'/><text x='50' y='72' font-size='60' font-weight='900' text-anchor='middle' fill='%23000'>V</text></svg>">
+</head>
+<body class="docs-body">
+
+  <div class="scroll-progress"></div>
+
+  <!-- ============ NAV ============ -->
+  <nav class="nav scrolled" id="mainNav" aria-label="Main navigation">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo" aria-label="VERIDIC Home">
+        <div class="v-mark">V</div>
+        VERIDIC
+      </a>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="index.html#features">Features</a>
+        <a href="docs.html" class="active">Documentation</a>
+        <a href="index.html#pricing">Pricing</a>
+      </div>
+      <div class="nav-cta" data-auth-slot="nav"></div>
+      <button class="hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <div class="mobile-menu" id="mobileMenu" role="dialog" aria-label="Mobile navigation">
+    <a href="index.html">Home</a>
+    <a href="index.html#features">Features</a>
+    <a href="docs.html">Documentation</a>
+    <a href="index.html#pricing">Pricing</a>
+    <div data-auth-slot="mobile" style="display:flex;flex-direction:column;gap:12px"></div>
+  </div>
+
+  <div class="docs-shell">
+
+    <!-- ============ SIDEBAR ============ -->
+    <aside class="docs-nav" id="docsNav" aria-label="Documentation navigation">
+      <div class="docs-search">
+        <i class="fas fa-magnifying-glass"></i>
+        <input type="search" id="docsSearch" placeholder="Search tools…" aria-label="Search tools">
+        <kbd>/</kbd>
+      </div>
+
+      <div class="docs-nav-group">
+        <h4>Getting started</h4>
+        <a href="#overview"><i class="fas fa-circle-info"></i> What VERIDIC is</a>
+        <a href="#architecture"><i class="fas fa-sitemap"></i> Architecture</a>
+        <a href="#voice"><i class="fas fa-waveform-lines"></i> Voice pipeline</a>
+        <a href="#install"><i class="fas fa-download"></i> Installation</a>
+        <a href="#config"><i class="fas fa-sliders"></i> Configuration</a>
+      </div>
+
+      <div class="docs-nav-group">
+        <h4>Core concepts</h4>
+        <a href="#determinism"><i class="fas fa-bullseye"></i> Deterministic execution</a>
+        <a href="#registry"><i class="fas fa-list-ul"></i> The tool registry</a>
+        <a href="#permissions"><i class="fas fa-hand"></i> Permissions &amp; gating</a>
+        <a href="#memory-model"><i class="fas fa-brain"></i> Memory model</a>
+      </div>
+
+      <div class="docs-nav-group">
+        <h4>Tool reference</h4>
+        <a href="#tools"><i class="fas fa-screwdriver-wrench"></i> All tools</a>
+        <div id="toolNav"></div>
+      </div>
+
+      <div class="docs-nav-group">
+        <h4>Application</h4>
+        <a href="#screens"><i class="fas fa-display"></i> Every screen</a>
+        <a href="#automation"><i class="fas fa-bolt"></i> Automation &amp; workflows</a>
+        <a href="#plugins"><i class="fas fa-puzzle-piece"></i> Plugin SDK</a>
+        <a href="#extensions"><i class="fas fa-layer-group"></i> Extension modules</a>
+        <a href="#api"><i class="fas fa-server"></i> REST API</a>
+      </div>
+
+      <div class="docs-nav-group">
+        <h4>Operations</h4>
+        <a href="#security"><i class="fas fa-shield-halved"></i> Security model</a>
+        <a href="#licensing"><i class="fas fa-key"></i> Licensing</a>
+        <a href="#troubleshooting"><i class="fas fa-stethoscope"></i> Troubleshooting</a>
+        <a href="#limitations"><i class="fas fa-triangle-exclamation"></i> Known limitations</a>
+        <a href="#glossary"><i class="fas fa-book"></i> Glossary</a>
+      </div>
+    </aside>
+
+    <!-- ============ MAIN ============ -->
+    <main class="docs-main">
+
+      <header class="docs-hero">
+        <span class="section-label">// Documentation · v1.0.0</span>
+        <h1>Everything VERIDIC <span class="text-gradient">can actually do</span></h1>
+        <p>
+          A complete reference for the assistant, its runtime and its toolset — written from the code that
+          ships, not from a roadmap. Where something is experimental or disabled by default, this page says so.
+        </p>
+        <div class="docs-metrics">
+          <div class="docs-metric"><div class="n" id="mCoreTools">—</div><div class="l">Registered tools</div></div>
+          <div class="docs-metric"><div class="n" id="mCategories">—</div><div class="l">Categories</div></div>
+          <div class="docs-metric"><div class="n" id="mScreens">—</div><div class="l">App screens</div></div>
+          <div class="docs-metric"><div class="n" id="mEndpoints">—</div><div class="l">REST endpoints</div></div>
+          <div class="docs-metric"><div class="n" id="mPlugins">—</div><div class="l">Bundled plugins</div></div>
+        </div>
+      </header>
+
+      <!-- ============================================================ -->
+      <section class="docs-section" id="overview">
+        <h2><i class="fas fa-circle-info"></i> What VERIDIC is</h2>
+
+        <p>
+          VERIDIC is a voice-first agentic assistant for Windows. The distinction it draws is between
+          <em>talking about</em> an action and <em>performing</em> one: when you ask it to open an
+          application, move a file or check what is eating your CPU, a real function runs against the real
+          machine and reports the real outcome.
+        </p>
+
+        <p>
+          The name is the design brief. Everything the assistant claims to have done is something a
+          registered tool actually returned — if a launch failed, the failure is what you hear. There is no
+          layer that smooths a failed operation into a confident-sounding summary.
+        </p>
+
+        <h3>The three pieces</h3>
+        <ul>
+          <li><strong>The agent</strong> — a Python process (<code>veridic_core/agent.py</code>) holding the tool registry, memory, safety gates and the model session.</li>
+          <li><strong>The interface</strong> — a Next.js application, also packaged as a Tauri desktop app, giving you fifteen screens over the same backend.</li>
+          <li><strong>The transport</strong> — LiveKit WebRTC carrying audio in both directions between the browser and the agent.</li>
+        </ul>
+
+        <div class="callout callout-note">
+          <i class="fas fa-circle-info"></i>
+          <div>
+            <p>
+              <strong>On "local-first".</strong> VERIDIC runs on your machine and acts on your machine, and
+              your files, memory and logs stay there. The default voice path, however, is
+              <strong>not offline</strong>: speech recognition and synthesis are provided by Google Gemini
+              Live over LiveKit, so audio leaves the device during a voice session. A fully-offline path
+              (Whisper + Piper + Ollama) exists in the tree but is <strong>experimental and not yet fully
+              wired</strong>. See <a href="#voice">Voice pipeline</a>.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================ -->
+      <section class="docs-section" id="architecture">
+        <h2><i class="fas fa-sitemap"></i> Architecture &amp; boot chain</h2>
+
+        <p>
+          One command starts everything. <code>veridic start</code> runs a bootstrap that checks
+          prerequisites, verifies your license, prepares both environments and launches the backend and
+          frontend together.
+        </p>
+
+        <div class="flow">
+          <div class="flow-step">
+            <div class="flow-num">1</div>
+            <div class="flow-body">
+              <h4><code>veridic.bat</code> → <code>cli/bootstrap.py start</code></h4>
+              <p>Entry point. Must be CRLF-encoded ASCII — <code>cmd.exe</code> mis-parses LF batch files and garbles the interpreter path.</p>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-num">2</div>
+            <div class="flow-body">
+              <h4>Prerequisite checks, with auto-fix</h4>
+              <p>Python 3.13, Node 20+, pnpm, MSVC C++ build tools and permissions. Missing pieces are installed rather than reported as an error.</p>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-num">3</div>
+            <div class="flow-body">
+              <h4>License verification</h4>
+              <p><code>verify_or_activate_license()</code> checks the hardware-bound key, prompting for activation if none is present.</p>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-num">4</div>
+            <div class="flow-body">
+              <h4>Environment setup</h4>
+              <p>Creates the Python venv and installs requirements; runs <code>pnpm install</code> for the frontend. Both are idempotent, so repeat starts are fast.</p>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-num">5</div>
+            <div class="flow-body">
+              <h4>Concurrent launch</h4>
+              <p><code>pnpm dev</code> starts Next.js on port 3000 and the Python agent side by side. An update check runs in the background and never blocks startup.</p>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-num">6</div>
+            <div class="flow-body">
+              <h4>Session handshake</h4>
+              <p>The UI calls <code>POST /api/connection-details</code> for a LiveKit participant token, joins the room, and the already-registered agent worker is dispatched into it. Voice begins.</p>
+            </div>
+          </div>
+        </div>
+
+        <h3>Commands</h3>
+        <div class="table-scroll">
+          <table class="docs-table">
+            <thead><tr><th style="width:180px">Command</th><th>What it does</th></tr></thead>
+            <tbody>
+              <tr><td><code>veridic start</code></td><td>The normal path — prerequisites, license, setup, then backend and UI together at <code>http://localhost:3000</code>. Stop with <kbd>Ctrl+C</kbd>.</td></tr>
+              <tr><td><code>veridic doctor</code></td><td>Diagnostics across Python, Node, pnpm, VC++, audio devices, camera, API keys, Mem0 and Ollama. Run this first when something is wrong.</td></tr>
+              <tr><td><code>veridic start-local</code></td><td>Experimental native mic/speaker mode — no LiveKit, no web UI. See <a href="#limitations">Known limitations</a>.</td></tr>
+              <tr><td><code>veridic help</code></td><td>Usage summary.</td></tr>
+              <tr><td><code>register_face.bat</code></td><td>Enrol your face for the Face ID login gate.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>Two modes, one file</h3>
+        <p>
+          <code>agent.py</code> reads <code>voice.mode</code> from configuration and branches at
+          <code>__main__</code>. In <strong>cloud</strong> mode (the default, and the path that actually
+          boots) it registers as a LiveKit Agents worker and Gemini Live native audio provides both
+          directions of speech. In <strong>local</strong> mode it runs a native mic/speaker pipeline with no
+          LiveKit at all. Same file, two entry points — not two competing implementations.
+        </p>
+      </section>
+
+      <!-- ============================================================ -->
+      <section class="docs-section" id="voice">
+        <h2><i class="fas fa-microphone-lines"></i> The voice pipeline</h2>
+
+        <p>
+          Voice is where most assistants feel slow, so it is worth being precise about who owns each stage.
+        </p>
+
+        <div class="table-scroll">
+          <table class="docs-table">
+            <thead><tr><th style="width:130px">Mode</th><th style="width:190px">Speech → text</th><th style="width:190px">Text → speech</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>cloud</strong><br><span style="color:var(--text-muted);font-size:0.82rem">default</span></td>
+                <td>Gemini Live native audio</td>
+                <td>Gemini Live native audio</td>
+                <td><span style="color:var(--green)">Working.</span> The <code>voice.stt</code> (Whisper) and <code>voice.tts</code> (Piper) config blocks are <strong>ignored</strong> on this path.</td>
+              </tr>
+              <tr>
+                <td><strong>local</strong></td>
+                <td>Whisper <span style="color:var(--text-muted)">(intended)</span></td>
+                <td>Piper <span style="color:var(--text-muted)">(intended)</span></td>
+                <td><span style="color:var(--amber)">Incomplete.</span> The voice loop is constructed with <code>stt</code>, <code>tts</code> and <code>intent_router</code> set to <code>None</code>.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>Echo cancellation</h3>
+        <p>
+          An assistant that hears its own voice will interrupt itself indefinitely. In cloud mode this is
+          handled by enabling LiveKit Background Voice Cancellation on the room input options, so the
+          agent's own output is filtered out of the inbound stream before it reaches the model.
+        </p>
+
+        <div class="callout callout-warn">
+          <i class="fas fa-lightbulb"></i>
+          <div>
+            <p>
+              <strong>Model names go stale.</strong> Use the <code>-latest</code> native-audio alias rather
+              than a dated preview tag. Dated previews are retired without notice and sessions then drop
+              with <code>1008 Requested entity was not found</code> — which looks like a network fault but
+              is not one.
+            </p>
+          </div>
+        </div>
+
+        <h3>Latency tuning</h3>
+        <p>
+          Three knobs in the <code>performance</code> block matter most: <code>launch_verify_ms</code> (how
+          long to wait after spawning an app before declaring success — lower is snappier, higher catches
+          more crashes), <code>mem0_timeout_seconds</code> (hard ceiling on the cloud memory fetch at
+          session start, default 0.5s), and <code>async_logging</code> (queues structured logs off the event
+          loop so disk writes never stall audio).
+        </p>
+      </section>
+
+      <!-- ============================================================ -->
+      <section class="docs-section" id="install">
+        <h2><i class="fas fa-download"></i> Installation</h2>
+
+        <h3>Requirements</h3>
+        <div class="table-scroll">
+          <table class="docs-table">
+            <thead><tr><th style="width:200px">Component</th><th style="width:150px">Version</th><th>Why</th></tr></thead>
+            <tbody>
+              <tr><td>Windows</td><td>10 or 11</td><td>The only supported platform today.</td></tr>
+              <tr><td>Python</td><td>3.11 min · 3.13 recommended</td><td>The agent runtime.</td></tr>
+              <tr><td>Node.js</td><td>20+ · 22.15.1 recommended</td><td>The Next.js interface.</td></tr>
+              <tr><td>pnpm</td><td>latest</td><td>Frontend package manager.</td></tr>
+              <tr><td>MSVC C++ Build Tools</td><td>VS 2017+ workload</td><td>Compiles native Python packages such as numpy and mediapipe.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>
+          The bootstrap installs anything missing from this list automatically — the versions are pinned in
+          <code>system_requirements.json</code> so a fresh machine ends up matching a working one.
+        </p>
+
+        <h3>First run</h3>
+        <ol>
+          <li>Clone or unpack the repository.</li>
+          <li>Create a root <code>.env</code> with your API keys — this is the single source of truth for secrets. Frontend LiveKit credentials go in <code>agent-starter-react/.env</code>.</li>
+          <li>Run <code>register_face.bat</code> to enrol your face, in good lighting.</li>
+          <li>Run <code>veridic start</code> and open <code>http://localhost:3000</code>.</li>
+        </ol>
+
+        <h3>Keys you need</h3>
+        <div class="table-scroll">
+          <table class="docs-table">
+            <thead><tr><th style="width:230px">Key</th><th style="width:130px">Required</th><th>Used for</th></tr></thead>
+            <tbody>
+              <tr><td><code>google</code></td><td><strong>Yes</strong></td><td>Gemini — the language model and native-audio voice.</td></tr>
+              <tr><td><code>livekit_url</code> / <code>_key</code> / <code>_secret</code></td><td><strong>Yes</strong></td><td>WebRTC transport between browser and agent.</td></tr>
+              <tr><td><code>mem0</code></td><td>Optional</td><td>Cloud long-term memory. Local SQLite memory works without it.</td></tr>
+              <tr><td><code>openweather</code></td><td>Optional</td><td>The <code>get_weather</code> tool.</td></tr>
+              <tr><td><code>google_search</code> + <code>search_engine_id</code></td><td>Optional</td><td>Custom Search. Requires a billing-linked Cloud project; the tool stays unregistered otherwise.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout callout-ok">
+          <i class="fas fa-circle-check"></i>
+          <div>
+            <p>
+              <code>user_config.json</code> holds only <code>YOUR_...</code> placeholders and is safe to
+              share or commit. Real values are overlaid from <code>.env</code> at load time, and
+              <code>.env</code> is gitignored.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================ -->
+      <section class="docs-section" id="config">
+        <h2><i class="fas fa-sliders"></i> Configuration</h2>
+
+        <p>
+          Everything non-secret lives in <code>user_config.json</code>. The blocks that matter:
+        </p>
+
+        <h3><code>llm</code> — model routing</h3>
+        <p>
+          <code>router_mode: "always_cloud"</code> is the default and sends every request to Gemini. The
+          <code>local</code> block configures an Ollama fallback (default <code>qwen2.5:3b</code> at
+          <code>http://localhost:11434</code>) and is <strong>only</strong> consulted if you change
+          <code>router_mode</code> away from <code>always_cloud</code> <em>and</em> an Ollama server is
+          actually reachable. Leave it alone and the block is inert.
+        </p>
+
+        <h3><code>voice</code> — the audio path</h3>
+        <p>
+          <code>mode</code> selects <code>cloud</code> or <code>local</code>. <code>wake_word_enabled</code>
+          controls hands-free activation. The nested <code>stt</code> and <code>tts</code> blocks apply only
+          to the local path — setting them in cloud mode does nothing.
+        </p>
+
+        <h3><code>extensions.features</code> — feature flags</h3>
+        <div class="table-scroll">
+          <table class="docs-table">
+            <thead><tr><th style="width:210px">Flag</th><th style="width:100px">Default</th><th>Effect</th></tr></thead>
+            <tbody>
+              <tr><td><code>extensions_enabled</code></td><td>true</td><td>Master switch for the extension layer.</td></tr>
+              <tr><td><code>plugin_system</code></td><td>true</td><td>Auto-discovers <code>.py</code> files in <code>veridic_core/plugins/</code> at startup.</td></tr>
+              <tr><td><code>intent_router</code></td><td>true</td><td>Routes recognised intents to tools directly, skipping a model round-trip.</td></tr>
+              <tr><td><code>smart_memory</code></td><td>true</td><td>Extracts durable facts from conversation automatically.</td></tr>
+              <tr><td><code>llm_extraction</code></td><td>false</td><td>Uses extra model calls for richer fact extraction. Off by default — it costs tokens.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3><code>performance</code></h3>
+        <p>
+          All optional; omit any value to take the default. Covers <code>launch_verify_ms</code>,
+          <code>mem0_timeout_seconds</code>, <code>local_memory_enabled</code> and
+          <code>async_logging</code> — see <a href="#voice">Latency tuning</a>.
+        </p>
+      </section>
+
+      <!-- ============================================================ -->
+      <section class="docs-section" id="determinism">
+        <h2><i class="fas fa-bullseye"></i> Deterministic execution</h2>
+
+        <p>
+          "Deterministic" here has a specific and limited meaning, and it is worth stating precisely so the
+          claim is checkable.
+        </p>
+
+        <p>
+          The language model chooses <em>which</em> tool to call and with <em>what</em> arguments. That
+          choice is a model output and is not deterministic. What <em>is</em> deterministic is everything
+          downstream: once a tool name and arguments exist, execution is ordinary Python. The same
+          arguments produce the same behaviour, the return value is the real result, and the result is what
+          gets reported.
+        </p>
+
+        <p>What this buys you in practice:</p>
+        <ul>
+          <li><strong>No invented paths.</strong> A file operation either resolves through path validation or fails. It cannot half-succeed against a plausible-looking directory that does not exist.</li>
+          <li><strong>No invented success.</strong> <code>launch_app</code> waits and checks for an immediate crash. If the process died, you are told it died.</li>
+          <li><strong>Auditable.</strong> Every invocation is structured-logged with its arguments and outcome, and <code>security_audit</code> reads that trail back.</li>
+          <li><strong>Repeatable.</strong> An automation routine is a list of tool calls in a JSON file, not a prompt. It runs identically every time because no model sits in the loop.</li>
+        </ul>
+
+        <div class="callout callout-note">
+          <i class="fas fa-circle-info"></i>
+          <div>
+            <p>
+              The honest framing: VERIDIC does not stop the model hallucinating. It stops a hallucination
+              from becoming a <em>silent</em> false success — the failure surfaces as a failure instead of
+              a confident summary of something that never happened.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================ -->
+      <section class="docs-section" id="registry">
+        <h2><i class="fas fa-list-ul"></i> The tool registry</h2>
+
+        <p>
+          Every capability is registered as a named entry with a callable and a metadata block. The registry
+          is a singleton built once at startup, and registration is fault-tolerant by design: each group is
+          wrapped so that a missing optional dependency disables just that group. Playwright absent means no
+          browser tools — not a failed boot.
+        </p>
+
+        <pre><code><span class="c"># How a tool is registered</span>
+registry.register(<span class="s">"kill_process"</span>, kill_process_by_pid, {
+    <span class="s">"description"</span>: <span class="s">"Kill a process by PID. Args: pid"</span>,
+    <span class="s">"category"</span>: <span class="s">"system"</span>,
+    <span class="s">"async"</span>: <span class="k">True</span>,
+    <span class="s">"requires_confirmation"</span>: <span class="k">True</span>,
+})</code></pre>
+
+        <h3>Metadata fields</h3>
+        <div class="table-scroll">
+          <table class="docs-table">
+            <thead><tr><th style="width:210px">Field</th><th>Meaning</th></tr></thead>
+            <tbody>
+              <tr><td><code>description</code></td><td>What the model reads when deciding whether to call this tool. The single highest-leverage string in a tool definition.</td></tr>
+              <tr><td><code>category</code></td><td>Grouping used for filtering and audit.</td></tr>
+              <tr><td><code>async</code></td><td>Whether the callable is a coroutine.</td></tr>
+              <tr><td><code>requires_confirmation</code></td><td>Routes the call through the confirmation broker before it executes.</td></tr>
+              <tr><td><code>timeout_seconds</code></td><td>Per-tool ceiling. Installers get 300s; most tools use the shorter default.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>Guards applied at the boundary</h3>
+        <ul>
+          <li><strong>Timeouts</strong> — every tool runs under a deadline, so one hung call cannot freeze the session.</li>
+          <li><strong>Retries</strong> — transient failures retry on an explicit allowlist of exception types, not blindly.</li>
+          <li><strong>Result stringification</strong> — tools returning rich <code>ExecutionResult</code> objects are wrapped so the model always receives clean text, with errors surfaced as <code>Error: …</code> rather than a mangled repr.</li>
+          <li><strong>Safe subprocess</strong> — shell-outs go through a hardened wrapper that handles quoting, capture and termination.</li>
+          <li><strong>Dry-run</strong> — destructive operations accept a <code>dry_run</code> flag that reports the plan instead of executing it. Installers default it to <code>True</code>.</li>
+        </ul>
+      </section>
+
+      <!-- ============================================================ -->
+      <section class="docs-section" id="permissions">
+        <h2><i class="fas fa-hand"></i> Permissions &amp; gating</h2>
+
+        <p>Three escalating levels of restriction, applied per tool.</p>
+
+        <h3>1 · Open</h3>
+        <p>
+          Reads and reversible actions run immediately: checking health, listing files, launching an app,
+          querying memory. Requiring a confirmation for every read would train you to say yes reflexively,
+          which is worse than not asking.
+        </p>
+
+        <h3>2 · Confirmation-gated</h3>
+        <p>
+          Marked <code>requires_confirmation</code> and routed through the confirmation broker, which
+          suspends execution and surfaces the pending action — named, with its arguments — to the interface.
+          Nothing runs until you approve. Covers process termination, folder deletion, file overwrites,
+          package and driver installation, registry edits, virus scans, camera enablement, face
+          registration, screen capture and conversation-history deletion.
+        </p>
+
+        <h3>3 · Token-gated</h3>
+        <p>
+          The sharpest tools additionally require a capability token that the model cannot mint:
+          <code>execute_script</code>, <code>configure_system_settings</code>, and the mutating actions of
+          <code>manage_services</code>. Confirmation alone is not sufficient — without a valid token the
+          call is refused outright. This is the boundary that keeps a persuasive prompt from reaching
+          arbitrary code execution.
+        </p>
+
+        <div class="callout callout-danger">
+          <i class="fas fa-triangle-exclamation"></i>
+          <div>
+            <p>
+              <strong>Destructive-tool changes touch four places.</strong> If you add or rename a tool that
+              can destroy data, its confirmation requirement has to be updated everywhere the permission
+              set is declared. Updating the registry alone leaves a gap where the tool executes ungated.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================ -->
+      <section class="docs-section" id="memory-model">
+        <h2><i class="fas fa-brain"></i> Memory model</h2>
+
+        <p>Memory operates on three timescales.</p>
+
+        <ul>
+          <li><strong>Session context</strong> — the active conversation window, managed to stay inside the model's context limit without dropping the parts that matter.</li>
+          <li><strong>Local store</strong> — SQLite on disk, holding entity–attribute–value facts and relationships. Works offline, survives restarts, and is fully browsable and deletable from the Memory screen.</li>
+          <li><strong>Cloud memory (Mem0)</strong> — optional cross-session recall, fetched at session start under a 0.5s timeout. If Mem0 is slow or down, the session starts anyway with local memory only.</li>
+        </ul>
+
+        <h3>Resuming a conversation</h3>
+        <p>
+          Resuming from the History screen passes the prior session through job metadata into the agent's
+          chat context. This restores the agent's <em>memory</em> of the conversation, not merely the
+          transcript you can see — so the resumed agent knows what was decided, not just what was said.
+        </p>
+
+        <h3>Forgetting</h3>
+        <p>
+          Deletion is a first-class operation at three granularities: <code>forget_fact</code> for one
+          attribute, <code>forget_entity</code> for everything about a subject, and
+          <code>delete_conversation_history</code> for the lot. The last is confirmation-gated and genuinely
+          irreversible — there is no server-side copy to restore from.
+        </p>
+      </section>
+
+      <!-- ============================================================ -->
+      <section class="docs-section" id="tools">
+        <h2><i class="fas fa-screwdriver-wrench"></i> Complete tool reference</h2>
+
+        <p>
+          Every tool VERIDIC can call, grouped by category. <strong id="mTotalTools">—</strong> tools in
+          total; <strong id="mConfirm">—</strong> of them require explicit confirmation before they run.
+          Search by name or capability, or filter by tag.
+        </p>
+
+        <div class="tool-toolbar">
+          <button class="tool-filter" data-tag="all" aria-pressed="true">All</button>
+          <button class="tool-filter" data-tag="files" aria-pressed="false">Files</button>
+          <button class="tool-filter" data-tag="system" aria-pressed="false">System</button>
+          <button class="tool-filter" data-tag="browser" aria-pressed="false">Browser</button>
+          <button class="tool-filter" data-tag="memory" aria-pressed="false">Memory</button>
+          <button class="tool-filter" data-tag="vision" aria-pressed="false">Vision</button>
+          <button class="tool-filter" data-tag="security" aria-pressed="false">Security</button>
+          <button class="tool-filter" data-tag="privacy" aria-pressed="false">Privacy</button>
+          <button class="tool-filter" data-tag="destructive" aria-pressed="false">Destructive</button>
+          <button class="tool-filter" data-tag="read" aria-pressed="false">Read-only</button>
+          <span class="tool-count" id="toolCount"></span>
+        </div>
+
+        <div id="toolCatalogue"></div>
+
+        <div class="callout callout-note" style="margin-top:32px">
+          <i class="fas fa-circle-info"></i>
+          <div>
+            <p>
+              Counts vary slightly at runtime. Groups whose dependencies are absent are skipped —
+              no Playwright means no browser tools — and <code>google_search</code> is unregistered unless
+              explicitly enabled. Run <code>veridic doctor</code> to see what actually loaded on your machine.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================ -->
+      <section class="docs-section" id="screens">
+        <h2><i class="fas fa-display"></i> Every screen in the app</h2>
+
+        <p>
+          The interface is a shell with a collapsible navigation rail, a command palette and a boot screen,
+          running in the browser or as a packaged Tauri desktop application. Fifteen surfaces across three
+          groups — and every navigation item is a real route. Items that are not finished render an honest
+          "coming soon" page rather than a dead link.
+        </p>
+
+        <div id="screenList"></div>
+
+        <h3>Command palette</h3>
+        <p>
+          Keyboard-driven navigation and actions from anywhere in the shell. Where an action needs a live
+          session it says so and takes you to the voice screen rather than silently failing.
+        </p>
+
+        <div class="callout callout-warn">
+          <i class="fas fa-microphone-slash"></i>
+          <div>
+            <p>
+              <strong>The microphone is not published on the Chat screen.</strong> Opening a text
+              conversation used to auto-publish the mic track; that is now gated behind an explicit flag on
+              session start. Text chat means text chat.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================ -->
+      <section class="docs-section" id="automation">
+        <h2><i class="fas fa-bolt"></i> Automation &amp; workflows</h2>
+
+        <p>
+          A routine is an ordered list of tool calls stored in <code>user_workflows.json</code>, addressable
+          by id or by a trigger phrase. Because it is data rather than a prompt, it executes identically
+          every run — no model in the loop, no drift.
+        </p>
+
+        <pre><code><span class="c">// user_workflows.json — shape</span>
+{
+  <span class="s">"id"</span>: <span class="s">"focus_mode"</span>,
+  <span class="s">"name"</span>: <span class="s">"Focus Mode"</span>,
+  <span class="s">"trigger"</span>: <span class="s">"start focus mode"</span>,
+  <span class="s">"steps"</span>: [
+    { <span class="s">"tool"</span>: <span class="s">"set_system_profile"</span>, <span class="s">"args"</span>: { <span class="s">"profile"</span>: <span class="s">"performance"</span> } },
+    { <span class="s">"tool"</span>: <span class="s">"launch_app"</span>,          <span class="s">"args"</span>: { <span class="s">"app_name"</span>: <span class="s">"Visual Studio Code"</span> } },
+    { <span class="s">"tool"</span>: <span class="s">"open_folder_by_name"</span>, <span class="s">"args"</span>: { <span class="s">"name"</span>: <span class="s">"projects"</span> } }
+  ]
+}</code></pre>
+
+        <p>
+          Manage routines from the Automation screen or call them by voice. <code>list_automations</code>
+          reports what exists — so when you ask what VERIDIC can do automatically, the answer comes from
+          your actual configuration rather than from the model's imagination.
+        </p>
+
+        <h3>Proactive suggestions</h3>
+        <p>
+          The Sentinel engine watches for manual sequences you repeat and surfaces them through
+          <code>get_proactive_suggestions</code> as automation candidates. Suggestions are advisory —
+          nothing is created without you.
+        </p>
+      </section>
+
+      <!-- ============================================================ -->
+      <section class="docs-section" id="plugins">
+        <h2><i class="fas fa-puzzle-piece"></i> Plugin SDK</h2>
+
+        <p>
+          Drop a single <code>.py</code> file into <code>veridic_core/plugins/</code> and its tools are
+          auto-discovered at startup and become callable by voice. Discovery is anchored to an absolute
+          path, so it works regardless of the process working directory. Requires
+          <code>extensions.features.plugin_system</code> to be <code>true</code>.
+        </p>
+
+        <pre><code><span class="k">from</span> extensions.plugins <span class="k">import</span> JarvisPlugin, PluginManifest, jarvis_tool
+
+
+<span class="k">class</span> MyPlugin(JarvisPlugin):
+    manifest = PluginManifest(
+        name=<span class="s">"my_plugin"</span>,
+        version=<span class="s">"1.0.0"</span>,
+        author=<span class="s">"you"</span>,
+        description=<span class="s">"What this plugin does"</span>,
+        permissions=[],              <span class="c"># e.g. ["network"], ["filesystem"]</span>
+        entry_point=<span class="s">"my_plugin.py"</span>,
+        enabled=<span class="k">True</span>,
+    )
+
+    <span class="k">async def</span> on_load(self):    <span class="c"># optional lifecycle hooks</span>
+        <span class="k">pass</span>
+
+    <span class="k">async def</span> on_unload(self):
+        <span class="k">pass</span>
+
+    @jarvis_tool(
+        name=<span class="s">"my_tool"</span>,
+        description=<span class="s">"Clear, action-oriented description the LLM reads"</span>,
+        permissions=[],
+        requires_confirmation=<span class="k">False</span>,   <span class="c"># True to gate irreversible actions</span>
+        timeout_seconds=5.0,
+    )
+    <span class="k">async def</span> my_tool(self, some_arg: str = <span class="s">"default"</span>) -&gt; str:
+        <span class="c"># Type hints on args become the tool's JSON schema automatically.</span>
+        <span class="k">return</span> <span class="s">f"did the thing with {some_arg}"</span></code></pre>
+
+        <p>Restart VERIDIC and the tool is live.</p>
+
+        <h3>Notes that save time</h3>
+        <ul>
+          <li>The <code>description</code> is what the model reads to decide whether to call your tool. Write it as an instruction, not a label.</li>
+          <li>Argument type hints become the JSON schema automatically — no separate schema to maintain.</li>
+          <li>Set <code>requires_confirmation=True</code> for anything irreversible. It costs one prompt and prevents an entire class of bad afternoon.</li>
+          <li><code>permissions</code> declares intent up front and is surfaced on the Extensions screen, so a user can see what a plugin claims before enabling it.</li>
+        </ul>
+
+        <h3>Bundled plugins</h3>
+        <div id="pluginList"></div>
+      </section>
+
+      <!-- ============================================================ -->
+      <section class="docs-section" id="extensions">
+        <h2><i class="fas fa-layer-group"></i> Extension modules</h2>
+
+        <p>
+          Below the plugin layer sits a set of first-party subsystems under
+          <code>veridic_core/extensions/</code>. These are not optional add-ons — they are the machinery the
+          agent runs on.
+        </p>
+
+        <div class="table-scroll">
+          <table class="docs-table">
+            <thead><tr><th style="width:180px">Module</th><th>Responsibility</th></tr></thead>
+            <tbody>
+              <tr><td><code>safety/</code></td><td>Permission evaluation and prompt-safety checks. Backed by a process-anchored singleton — a dual-import split here once silently emptied every permission set.</td></tr>
+              <tr><td><code>memory/</code></td><td>Storage, retrieval and autonomous fact extraction.</td></tr>
+              <tr><td><code>workflow/</code></td><td>Executes multi-step routines and reports per-step results.</td></tr>
+              <tr><td><code>simulation/</code></td><td>Digital-twin sandbox for previewing an operation's effect before committing to it.</td></tr>
+              <tr><td><code>capability/</code></td><td>Capability tokens and the acquisition pipeline for new skills.</td></tr>
+              <tr><td><code>vision/</code></td><td>Face authentication and image analysis.</td></tr>
+              <tr><td><code>visual/</code></td><td>Emits tool-call events to the UI so you can watch execution in real time.</td></tr>
+              <tr><td><code>prometheus/</code></td><td>Metrics export for external monitoring.</td></tr>
+              <tr><td><code>browser/</code></td><td>Playwright session lifecycle and page-state management.</td></tr>
+              <tr><td><code>desktop/</code></td><td>Desktop automation primitives.</td></tr>
+              <tr><td><code>diagnostics/</code></td><td>Powers <code>veridic doctor</code> and the health endpoints.</td></tr>
+              <tr><td><code>context/</code></td><td>Builds situational context from running applications and system state.</td></tr>
+              <tr><td><code>models/</code></td><td>Model adapters and routing between cloud and local backends.</td></tr>
+              <tr><td><code>plugins/</code></td><td>Plugin discovery, the manifest system and the <code>@jarvis_tool</code> decorator.</td></tr>
+              <tr><td><code>sentinel.py</code></td><td>Predictive monitoring and trend analysis.</td></tr>
+              <tr><td><code>intent_router.py</code></td><td>Maps recognised intents straight to tools, skipping a model round-trip.</td></tr>
+              <tr><td><code>system_synthesizer.py</code></td><td>Folds individual metrics into a single health and context picture.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ============================================================ -->
+      <section class="docs-section" id="api">
+        <h2><i class="fas fa-server"></i> REST API</h2>
+
+        <p>
+          <code>veridic_core/api_server.py</code> exposes a loopback HTTP API on port <strong>8989</strong>.
+          The Next.js app proxies <code>/api/*</code> to it for the endpoints it does not serve itself.
+        </p>
+
+        <div id="apiTable"></div>
+
+        <h3>How it is protected</h3>
+        <ul>
+          <li><strong>Presence, not values.</strong> <code>GET /api/config</code> returns booleans indicating which keys are configured. It never returns a key.</li>
+          <li><strong>Origin allowlist.</strong> CORS is locked to <code>localhost:3000</code> / <code>127.0.0.1:3000</code>, extendable via <code>VERIDIC_ALLOWED_ORIGINS</code>. Unknown origins get no allow header at all.</li>
+          <li><strong>Loopback plus custom header.</strong> Sensitive endpoints require the request to originate from loopback <em>and</em> carry <code>X-Veridic-Local: 1</code>. A hostile page cannot set that header cross-origin without triggering a preflight the allowlist rejects — which is what closes off CSRF and DNS-rebinding attacks against a local API.</li>
+        </ul>
+      </section>
+
+      <!-- ============================================================ -->
+      <section class="docs-section" id="security">
+        <h2><i class="fas fa-shield-halved"></i> Security model</h2>
+
+        <h3>Secrets</h3>
+        <p>
+          One source of truth: the gitignored root <code>.env</code>, overlaid onto the config at load.
+          <code>user_config.json</code> carries placeholders only. Also gitignored:
+          <code>.veridic_lic</code>, <code>.license_secret</code>, <code>saved_files/</code> and
+          <code>brain/</code>. If a key was ever committed in plaintext, rotate it — removing it from the
+          working tree does not remove it from history.
+        </p>
+
+        <h3>Face ID</h3>
+        <p>The login gate is a real control, not decoration:</p>
+        <ul>
+          <li><strong>Fails closed.</strong> If the backend is not ready, access is denied rather than waved through.</li>
+          <li><strong>Majority match.</strong> At least 3 of 5 samples must match your registered centroid.</li>
+          <li><strong>Lockout.</strong> After 5 failures (<code>VERIDIC_FACE_MAX_ATTEMPTS</code>) it locks for 300 seconds (<code>VERIDIC_FACE_LOCKOUT_SECONDS</code>). Both are environment-configurable.</li>
+          <li><strong>No backdoor.</strong> There is intentionally no hardcoded bypass password.</li>
+          <li><strong>Not a self-lockout trap.</strong> If no users are registered at all, the gate is skipped by design.</li>
+        </ul>
+
+        <h4>If it locks you out</h4>
+        <ol>
+          <li>Set <code>FACE_AUTH_ENABLED=false</code> in <code>veridic_core/.env</code>, start up, re-run <code>register_face.bat</code> in good lighting, then re-enable the gate.</li>
+          <li>Or wait out the five-minute lockout and retry with better lighting.</li>
+        </ol>
+
+        <div class="callout callout-danger">
+          <i class="fas fa-triangle-exclamation"></i>
+          <div>
+            <p>
+              <strong>Do not lower the match threshold to stop lockouts.</strong> Re-registering under good
+              lighting fixes the actual cause. Loosening the threshold turns a working control into
+              security theatre while leaving you convinced you still have one.
+            </p>
+          </div>
+        </div>
+
+        <h3>Privacy defaults</h3>
+        <ul>
+          <li>Camera off until <code>enable_camera</code> is called explicitly; disabling is never gated.</li>
+          <li>Screen capture is confirmation-gated — a screenshot can contain anything on your display.</li>
+          <li>Files, logs and local memory never leave the machine.</li>
+          <li>Voice audio <em>does</em> leave the machine in the default cloud mode. Stated plainly because the alternative reading would be flattering and wrong.</li>
+          <li>Web scraping runs under data-governance rules rather than fetching any URL handed to it.</li>
+        </ul>
+      </section>
+
+      <!-- ============================================================ -->
+      <section class="docs-section" id="licensing">
+        <h2><i class="fas fa-key"></i> Licensing</h2>
+
+        <p>
+          Offline verification via <strong>HMAC-SHA256(HWID, master&nbsp;secret)</strong> — no license server,
+          no phone-home. The master secret resolves in order: the
+          <code>VERIDIC_LICENSE_SECRET</code> environment variable, then a gitignored
+          <code>.license_secret</code> keyfile, then a legacy embedded fallback so previously-issued keys
+          keep validating.
+        </p>
+
+        <h3>Issuing your own keys</h3>
+        <p>
+          Set <code>VERIDIC_LICENSE_SECRET</code> (or write <code>.license_secret</code>) before issuing
+          real keys. Legacy-signed licenses stop validating at that point and must be reissued — which is
+          the intended behaviour when you take over signing.
+        </p>
+
+        <h3>Build safety</h3>
+        <p>
+          <code>build_release.py</code> deletes developer-only files before packaging and runs a security
+          gate that <strong>fails the build</strong> if the master-secret literal or a dev-only file is
+          still present in cleartext. Run it standalone in CI with <code>python build_release.py --check</code>.
+        </p>
+
+        <div class="callout callout-warn">
+          <i class="fas fa-scale-balanced"></i>
+          <div>
+            <p>
+              <strong>Known weaknesses, stated openly.</strong> A symmetric scheme must ship the secret in
+              order to verify on the client, so it can never be truly hidden. There is also no expiry and no
+              revocation. The recommended upgrade is Ed25519 signatures — sign <code>{hwid, exp}</code> with
+              a private key you keep, ship only the public key — which removes the first weakness entirely
+              and enables the other two. Not yet built.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================ -->
+      <section class="docs-section" id="troubleshooting">
+        <h2><i class="fas fa-stethoscope"></i> Troubleshooting</h2>
+
+        <p>
+          Start with <code>veridic doctor</code>. It checks Python, Node, pnpm, VC++ build tools, audio
+          devices, camera, API keys, Mem0 and Ollama in one pass. Logs rotate under
+          <code>%APPDATA%\Veridic\logs\veridic.log</code>; set <code>VERIDIC_DEBUG=1</code> for verbose output.
+        </p>
+
+        <div class="table-scroll">
+          <table class="docs-table">
+            <thead><tr><th style="width:230px">Symptom</th><th>Cause &amp; fix</th></tr></thead>
+            <tbody>
+              <tr>
+                <td>App appears dead on start</td>
+                <td>Port 8989 conflict from a previous run. This self-heals — give it a moment before restarting. If it persists, check for an orphaned Python process.</td>
+              </tr>
+              <tr>
+                <td>Voice feels laggy</td>
+                <td>Cloud-path VAD latency. Tune the <code>voice.vad.*</code> values in <code>user_config.json</code>; also check <code>mem0_timeout_seconds</code> is not set high.</td>
+              </tr>
+              <tr>
+                <td>It hears itself and interrupts</td>
+                <td>Browser acoustic echo cancellation disabled at the capture site. AEC must be on where audio is captured — enabling it downstream does not help, and the symptom is echo <em>plus</em> added latency.</td>
+              </tr>
+              <tr>
+                <td>Mic opens during text chat</td>
+                <td>Historic behaviour where the mic track auto-published on session start. Now gated behind an explicit flag — update if you are on an older build.</td>
+              </tr>
+              <tr>
+                <td>Session drops with <code>1008 Requested entity was not found</code></td>
+                <td>A stale Gemini Live model name. Switch to the <code>-latest</code> native-audio alias instead of a dated preview tag.</td>
+              </tr>
+              <tr>
+                <td>"Permissions are: []" — every tool blocked</td>
+                <td>A dual-import split created two copies of the safety module, so the registry populated one and the checker read the other. Fixed by anchoring the singleton to <code>sys.modules</code> and comparing permissions by value.</td>
+              </tr>
+              <tr>
+                <td>Bootstrap runs with a garbled path</td>
+                <td>A root <code>.bat</code> file saved with LF endings or containing non-ASCII characters. Batch files must be CRLF and ASCII.</td>
+              </tr>
+              <tr>
+                <td>Face ID will not let you in</td>
+                <td>Low light or appearance change. Recover with <code>FACE_AUTH_ENABLED=false</code>, re-register, re-enable — see <a href="#security">Security model</a>.</td>
+              </tr>
+              <tr>
+                <td><code>google_search</code> missing</td>
+                <td>Unregistered by default. Set <code>VERIDIC_WEB_SEARCH_ENABLED=true</code> and link a billing account to the Google Cloud project, or the API returns 403 on every call.</td>
+              </tr>
+              <tr>
+                <td>No browser tools</td>
+                <td>Playwright is not installed. The registry logs a warning and skips the group instead of failing the boot.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>Tests</h3>
+        <pre><code>veridic_core\venv\Scripts\python.exe -m pytest veridic_core/tests/test_hardening.py -q</code></pre>
+      </section>
+
+      <!-- ============================================================ -->
+      <section class="docs-section" id="limitations">
+        <h2><i class="fas fa-triangle-exclamation"></i> Known limitations</h2>
+
+        <p>
+          Documented deliberately. A reference that only lists strengths is a brochure, and you would find
+          these out anyway — better here than at 2am.
+        </p>
+
+        <ul>
+          <li><strong>Native-local mode is incomplete.</strong> <code>veridic start-local</code> targets fully-offline operation, but the voice loop is constructed without STT, TTS or an intent router. The <code>voice.stt</code>, <code>voice.tts</code> and <code>llm.local</code> config blocks apply only to this path and it does not yet consume them.</li>
+          <li><strong>Windows only.</strong> Linux and macOS are roadmap items. The architecture is modular enough to make the port tractable, but it has not been done.</li>
+          <li><strong>Default voice path is not private.</strong> Cloud mode sends audio to Gemini Live. Local processing of files and memory does not change that.</li>
+          <li><strong>Licensing is symmetric.</strong> The verification secret ships with the client; no expiry, no revocation. See <a href="#licensing">Licensing</a>.</li>
+          <li><strong>Google Custom Search is off.</strong> Requires a billing-linked Cloud project.</li>
+          <li><strong>Optional dependencies change the toolset.</strong> Playwright, Windows Defender and the Minecraft bridge each gate their own tool group. Two installs can legitimately expose different tool counts.</li>
+          <li><strong>Determinism has a boundary.</strong> Tool <em>execution</em> is deterministic; tool <em>selection</em> is a model decision. See <a href="#determinism">Deterministic execution</a>.</li>
+        </ul>
+      </section>
+
+      <!-- ============================================================ -->
+      <section class="docs-section" id="glossary">
+        <h2><i class="fas fa-book"></i> Glossary</h2>
+
+        <div class="table-scroll">
+          <table class="docs-table">
+            <thead><tr><th style="width:210px">Term</th><th>Meaning</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Agent</strong></td><td>The Python process holding the tool registry, memory, safety gates and model session.</td></tr>
+              <tr><td><strong>Tool</strong></td><td>A named, registered function the model may call, with validated arguments and declared metadata.</td></tr>
+              <tr><td><strong>Registry</strong></td><td>The singleton mapping tool names to callables and metadata, built once at startup.</td></tr>
+              <tr><td><strong>Confirmation broker</strong></td><td>The component that suspends a gated tool call and surfaces it to the interface for approval.</td></tr>
+              <tr><td><strong>Capability token</strong></td><td>A credential required by the most dangerous tools, which the model cannot mint for itself.</td></tr>
+              <tr><td><strong>Sentinel</strong></td><td>The background engine keeping metric history and projecting it forward into failure predictions.</td></tr>
+              <tr><td><strong>Synthesizer</strong></td><td>The layer folding individual metrics into one health score, security posture and activity context.</td></tr>
+              <tr><td><strong>Digital twin</strong></td><td>The simulation sandbox used to preview an operation's effect before committing to it.</td></tr>
+              <tr><td><strong>HWID</strong></td><td>Hardware identifier that a license signature is bound to.</td></tr>
+              <tr><td><strong>Mem0</strong></td><td>The optional cloud memory service used for cross-session recall.</td></tr>
+              <tr><td><strong>LiveKit</strong></td><td>The WebRTC platform carrying audio between the browser and the agent worker.</td></tr>
+              <tr><td><strong>BVC</strong></td><td>Background Voice Cancellation — keeps the agent from hearing and responding to its own speech.</td></tr>
+              <tr><td><strong>Intent router</strong></td><td>Maps recognised intents straight to tools, skipping a model round-trip for common commands.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout callout-ok" style="margin-top:36px">
+          <i class="fas fa-circle-check"></i>
+          <div>
+            <p>
+              <strong>Something missing or wrong here?</strong> This page is generated from the shipping code
+              and its documentation. If behaviour on your machine differs, run <code>veridic doctor</code>
+              first — the most common cause is an optional dependency that did not load.
+            </p>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- ============ RIGHT RAIL ============ -->
+    <aside class="docs-rail" aria-label="On this page">
+      <h4>On this page</h4>
+      <a href="#overview">What VERIDIC is</a>
+      <a href="#architecture">Architecture</a>
+      <a href="#voice">Voice pipeline</a>
+      <a href="#install">Installation</a>
+      <a href="#config">Configuration</a>
+      <a href="#determinism">Determinism</a>
+      <a href="#registry">Tool registry</a>
+      <a href="#permissions">Permissions</a>
+      <a href="#memory-model">Memory model</a>
+      <a href="#tools">Tool reference</a>
+      <a href="#screens">App screens</a>
+      <a href="#automation">Automation</a>
+      <a href="#plugins">Plugin SDK</a>
+      <a href="#extensions">Extension modules</a>
+      <a href="#api">REST API</a>
+      <a href="#security">Security</a>
+      <a href="#licensing">Licensing</a>
+      <a href="#troubleshooting">Troubleshooting</a>
+      <a href="#limitations">Limitations</a>
+      <a href="#glossary">Glossary</a>
+    </aside>
+  </div>
+
+  <button class="docs-nav-toggle" id="docsNavToggle" aria-label="Toggle documentation navigation">
+    <i class="fas fa-list"></i>
+  </button>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="index.html" class="nav-logo" aria-label="VERIDIC Home">
+            <div class="v-mark">V</div>
+            VERIDIC
+          </a>
+          <p>A deterministic, voice-first agentic assistant for Windows. Built for people who want the machine to actually do the thing.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Documentation</h4>
+          <a href="#install">Installation</a>
+          <a href="#tools">Tool reference</a>
+          <a href="#plugins">Plugin SDK</a>
+          <a href="#api">REST API</a>
+        </div>
+        <div class="footer-col">
+          <h4>Product</h4>
+          <a href="index.html#features">Features</a>
+          <a href="index.html#capabilities">Capabilities</a>
+          <a href="index.html#pricing">Pricing</a>
+          <a href="dashboard.html">Dashboard</a>
+        </div>
+        <div class="footer-col">
+          <h4>Operations</h4>
+          <a href="#security">Security model</a>
+          <a href="#licensing">Licensing</a>
+          <a href="#troubleshooting">Troubleshooting</a>
+          <a href="#limitations">Limitations</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>&copy; 2026 VERIDIC Project. All rights reserved.</span>
+        <div class="footer-social">
+          <a href="#" aria-label="GitHub"><i class="fab fa-github"></i></a>
+          <a href="#" aria-label="Discord"><i class="fab fa-discord"></i></a>
+          <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="auth.js"></script>
+  <script src="docs-data.js"></script>
+  <script src="docs.js"></script>
+  <script>
+    // Mobile menu for the top nav (docs pages don't load script.js).
+    (function () {
+      var burger = document.getElementById('hamburger');
+      var menu = document.getElementById('mobileMenu');
+      if (!burger || !menu) return;
+      burger.addEventListener('click', function () {
+        var open = menu.classList.toggle('active');
+        burger.setAttribute('aria-expanded', String(open));
+        document.body.style.overflow = open ? 'hidden' : '';
+      });
+      menu.querySelectorAll('a').forEach(function (a) {
+        a.addEventListener('click', function () {
+          menu.classList.remove('active');
+          document.body.style.overflow = '';
+        });
+      });
+    })();
+
+    // Scroll progress bar.
+    (function () {
+      var bar = document.querySelector('.scroll-progress');
+      if (!bar) return;
+      window.addEventListener('scroll', function () {
+        var h = document.documentElement.scrollHeight - window.innerHeight;
+        bar.style.width = h > 0 ? (window.scrollY / h * 100) + '%' : '0%';
+      }, { passive: true });
+    })();
+  </script>
+</body>
+</html>

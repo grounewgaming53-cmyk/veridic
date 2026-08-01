@@ -1,0 +1,77 @@
+# =====================================================================
+# Render deployment (https://render.com)
+# ---------------------------------------------------------------------
+# Why not GitHub Pages: Pages serves static files only. This site needs a
+# running Node process for payments, payment verification, the webhook
+# endpoint and the admin session cookies — none of which can exist on
+# static hosting.
+#
+# Setup:
+#   1. Push this repo to GitHub.
+#   2. Render dashboard → New → Blueprint → pick this repo.
+#   3. Render reads this file and creates the service.
+#   4. Add the secret env vars in the dashboard (they are marked
+#      sync:false below, so Render prompts for them and never stores
+#      them in the repo).
+#
+# IMPORTANT — the free tier has an ephemeral filesystem: orders.db is
+# wiped on every deploy and on idle spin-down. Fine for testing. Before
+# taking real money, either attach a Render Disk (paid) at /var/data and
+# set DB_PATH=/var/data/orders.db, or move to Postgres.
+# =====================================================================
+
+services:
+  - type: web
+    name: veridic
+    runtime: node
+    plan: free
+    region: singapore          # closest Render region to India
+    branch: main
+
+    buildCommand: cd server && npm install
+    startCommand: cd server && node server.js
+
+    healthCheckPath: /healthz
+
+    envVars:
+      - key: NODE_ENV
+        value: production
+
+      # Render injects PORT itself; config.js reads it.
+
+      # Public origin — used to build Cashfree return/notify URLs.
+      # Set this to your real Render URL after the first deploy,
+      # e.g. https://veridic.onrender.com
+      - key: PUBLIC_URL
+        sync: false
+
+      - key: CURRENCY
+        value: inr
+
+      # Free tier has no persistent disk; see the note above.
+      - key: DB_PATH
+        value: ./orders.db
+
+      # Never let a public deployment mint free "paid" orders.
+      - key: ALLOW_DEMO_PAYMENTS
+        value: "false"
+
+      # ---- secrets: entered in the Render dashboard, never in git ----
+      - key: ADMIN_PASSWORD_HASH
+        sync: false
+      - key: CASHFREE_APP_ID
+        sync: false
+      - key: CASHFREE_SECRET_KEY
+        sync: false
+      - key: CASHFREE_ENV
+        sync: false
+      - key: TWILIO_ACCOUNT_SID
+        sync: false
+      - key: TWILIO_AUTH_TOKEN
+        sync: false
+      - key: TWILIO_FROM_NUMBER
+        sync: false
+      - key: RESEND_API_KEY
+        sync: false
+      - key: EMAIL_FROM
+        sync: false

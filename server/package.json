@@ -1,0 +1,18 @@
+{
+  "name": "veridic-payments",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Payment, verification and notification backend for the VERIDIC site.",
+  "type": "module",
+  "engines": {
+    "node": ">=22.5.0"
+  },
+  "scripts": {
+    "start": "node --env-file-if-exists=.env server.js",
+    "dev": "node --env-file-if-exists=.env --watch server.js",
+    "check": "node --env-file-if-exists=.env --check server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}
